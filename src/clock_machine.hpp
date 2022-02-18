@@ -10,6 +10,7 @@
 #define NVS_STORAGE         "storage"
 #define NVS_ALARM_HOUR      "alarm_hour"
 #define NVS_ALARM_MINUTE    "alarm_minute"
+#define NVS_SETTINGS        "settings"
 
 // Forward declaration to resolve circular dependency/include
 class ClockState;
@@ -17,8 +18,10 @@ class ClockState;
 class ClockMachine {
    public:
     ClockMachine(RotaryEncoder* encoder_ref);
-    // TODO inline ClockState* getCurrentState() const {return state;}
+    // TODO So far I never needed this method, remove when it's clear that I don't need it
+    // inline ClockState* getCurrentState() const {return state;}
     void saveAlarmTimeInNVS();
+    void saveSettingsInNVS();
     void setState(ClockState& newState);
     void checkTimeUpdate(void);
     WifiTime* getWifiTime();
@@ -33,17 +36,18 @@ class ClockMachine {
     ~ClockMachine();
 
     clock_time_t stored_time;
-    // TODO I don't know if I want this being read from NVM (use case: power blackout at night)
     bool is_alarm_set = false;
     clock_time_t alarm_time;
     struct {
         uint8_t crescendo_factor = 5;     // (Factor)*100 ms per volume step. If factor == 1 -> 3 seconds until maximum volume
         uint16_t snooze_time_s = 300;     // Snooze time in seconds (must be a factor of 5!)
+        bool sounds_on = false;
+        uint8_t melody_nr = 1;
     } settings;
 
    private:
     esp_err_t readNVSValues();
-    esp_err_t writeNVSDefaultValues();
+    void writeNVSDefaultValues();
 
     ClockState* state;
     WifiTime wifi_time;

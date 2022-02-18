@@ -40,7 +40,7 @@ void TimeState::buttonShortPressed(ClockMachine* clock) {
         clock->is_alarm_set = !clock->is_alarm_set;
         if (clock->is_alarm_set) {
             clock->getPlayer()->setVolume(10);
-            clock->getPlayer()->playTrack(2);  // TODO Replace 3 with a #define value
+            clock->getPlayer()->playTrack(clock->settings.melody_nr);  // TODO Replace this with the current melody set
         }
         clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, action);
     }
@@ -275,10 +275,12 @@ void SetAlarmState::exit(ClockMachine* clock) {
     clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, D_A_ON);
     clock->is_alarm_set = true;  // After setting the new alarm time alarm is set
     clock->saveAlarmTimeInNVS();
-    // TODO This "kling" confirmation should be a setting as well as a function call (it is done somewhere else in this state as well)
-    clock->getPlayer()->setVolume(10);
-    clock->getPlayer()->playTrack(2);  // TODO Replace 3 with a #define or variable value
-    clock->triggerTimer(3000);         // To show the new alarm time at least 3 seconds
+
+    if (clock->settings.sounds_on) {
+        clock->getPlayer()->setVolume(10);
+        clock->getPlayer()->playTrack(CONFIRMATION_TRACK);
+    }
+    clock->triggerTimer(3000);  // To show the new alarm time at least 3 seconds
 }
 
 SetAlarmState::~SetAlarmState() {}

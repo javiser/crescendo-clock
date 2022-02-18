@@ -23,7 +23,7 @@ ClockMachine::ClockMachine(RotaryEncoder* encoder_ref) {
     if (readNVSValues() == ESP_ERR_NVS_NOT_FOUND) {
         // This is the fault we get when we try to read data which has not yet been written in the memory. In that case we accept that and rewrite
         // the default values (all of them) into the flash. Then we try again but in this case we don't accept errors anymore and crash the SW
-        ESP_ERROR_CHECK(writeNVSDefaultValues());
+        writeNVSDefaultValues();
         ESP_ERROR_CHECK(readNVSValues());
     }
 
@@ -40,27 +40,22 @@ esp_err_t ClockMachine::readNVSValues() {
     if (err != ESP_OK) return err;
     err = nvs_get_u8(NVS_handle, NVS_ALARM_MINUTE, &alarm_time.minute);
     if (err != ESP_OK) return err;
+    size_t length = sizeof(settings);
+    err = nvs_get_blob(NVS_handle, NVS_SETTINGS, &settings, &length);
 
     nvs_close(NVS_handle);
 
     return err;
 }
 
-esp_err_t ClockMachine::writeNVSDefaultValues() {
+void ClockMachine::writeNVSDefaultValues() {
     // Default some values if values not set in NVS yet
     alarm_time.hour = 7;
     alarm_time.minute = 0;
-    // TODO not yet sure if I want to use this submethod for this, but why not actually?
     saveAlarmTimeInNVS();
-
-    // TODO
-    // settings.crescendo_factor;
-    // settings.snooze_time_s;
-
-    return ESP_OK;
+    saveSettingsInNVS();
 }
 
-// TODO Does this method belong here or only in the SetAlarmState?
 void ClockMachine::saveAlarmTimeInNVS() {
     nvs_handle_t NVS_handle;
 
@@ -70,6 +65,16 @@ void ClockMachine::saveAlarmTimeInNVS() {
 
     nvs_close(NVS_handle);
 }
+
+void ClockMachine::saveSettingsInNVS() {
+    nvs_handle_t NVS_handle;
+
+    ESP_ERROR_CHECK(nvs_open(NVS_STORAGE, NVS_READWRITE, &NVS_handle));
+    ESP_ERROR_CHECK(nvs_set_blob(NVS_handle, NVS_SETTINGS, &settings, sizeof(settings)));
+
+    nvs_close(NVS_handle);
+}
+
 void ClockMachine::setState(ClockState& newState) {
     active_timer_us = 0;
     state->exit(this);   // do stuff before we change state
