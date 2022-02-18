@@ -193,14 +193,17 @@ void Display::animateStuff(void) {
 void Display::controlBrightness(void) {
     uint16_t ambient_light = 0;
     uint8_t number_of_retries = 0;
-    while (ambient_light == 0 and number_of_retries < 5) {
+
+    // TODO I think that this error is related to the wifi. In theory I could turn off the wifi before I need it again?
+    while (ambient_light == 0 and number_of_retries < 3) {
         ambient_light = (uint16_t)adc1_get_raw(LIGHT_ADC_CHANNEL);
         vTaskDelay(50 / portTICK_PERIOD_MS);
         number_of_retries++;
     }
+
     if (ambient_light == 0)
-        // TODO I think that this error is related to the wifi. In theory I could turn off the wifi before I need it again?
-        ESP_LOGE(TAG, "Error reading ambient light");
+        // We could not read the ambient light, we try again in the next iteration
+        return;
 
     if (max_brightness_requested || !ambient_light) {
         setBrightness(DISPLAY_BRIGHTNESS_LEVELS_NR);

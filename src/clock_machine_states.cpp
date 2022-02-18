@@ -3,9 +3,9 @@
 #include <wifi_time.hpp>
 #include "esp_log.h"
 
-/////////////
-// TIME STATE
-/////////////
+//--------------//
+//  TIME STATE  //
+//--------------//
 
 ClockState& TimeState::getInstance() {
     static TimeState singleton;
@@ -26,7 +26,7 @@ void TimeState::run(ClockMachine* clock) {
         clock->setState(AlarmState::getInstance());
     }
 
-    // TODO Check also if I need to show the remaining time until alarm (it helps me see how much sleep I will get)
+    // TODO Implement the "remaining time until alarm" feature (it helps me see how much sleep I will get)
 }
 
 void TimeState::timerExpired(ClockMachine* clock) {
@@ -68,9 +68,10 @@ void TimeState::exit(ClockMachine* clock) {
 
 TimeState::~TimeState() {}
 
-//////////////
-// ALARM STATE
-//////////////
+
+//---------------//
+//  ALARM STATE  //
+//---------------//
 
 ClockState& AlarmState::getInstance() {
     static AlarmState singleton;
@@ -117,9 +118,10 @@ void AlarmState::exit(ClockMachine* clock) {
 
 AlarmState::~AlarmState() {}
 
-///////////////
-// SNOOZE STATE
-///////////////
+
+//----------------//
+//  SNOOZE STATE  //
+//----------------//
 
 ClockState& SnoozeState::getInstance() {
     static SnoozeState singleton;
@@ -132,7 +134,6 @@ void SnoozeState::enter(ClockMachine* clock) {
     clock->triggerTimer(3000);  // To show the time 3 seconds after snoozing
     snooze_start_timer_s = (int64_t)(esp_timer_get_time() / 1000000);
     remaining_snooze_time_s = clock->settings.snooze_time_s;
-    // TODO Update display
 }
 
 void SnoozeState::run(ClockMachine* clock) {
@@ -201,9 +202,9 @@ void SnoozeState::exit(ClockMachine* clock) {
 
 SnoozeState::~SnoozeState() {}
 
-//////////////////
-// SET ALARM STATE
-//////////////////
+//-------------------//
+//  SET ALARM STATE  //
+//-------------------//
 
 ClockState& SetAlarmState::getInstance() {
     static SetAlarmState singleton;
@@ -254,7 +255,7 @@ void SetAlarmState::buttonShortPressed(ClockMachine* clock) {
 }
 
 void SetAlarmState::buttonLongPressed(ClockMachine* clock) {
-    // Button long press action does not have any effect when setting the alarm time, do nothing
+    // TODO Button long press action does not have any effect when setting the alarm time. But maybe we want to use it to cancel this? If yes, I need to rework the exit function
 }
 
 void SetAlarmState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t position, rotary_encoder_dir_t direction) {
