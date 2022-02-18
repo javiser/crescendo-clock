@@ -2,27 +2,31 @@
 A self-made clock with a gentle crescendo functionality.
 
 ## Highlights
+- Gentle alarm-clock with a crescendo function to wake up slowly and peacefully
+- Simplified user interaction with a rotary encoder with a button. No touch display, no need for 10 different buttons
 - Written in C++ with ESP-IDF framework (no Arduino!) using Platformio + VSCode
-- Small but not just an empty "hello world" example
-- Available custom bootloader and partition tables for this board
-- Preconfigured runner, just call `cargo run`
 
 ## Hardware
-Work in progress
 ### Electrical components
-- ESP32C3
-- Rotary encoder
-- 2.4 inch display with ILI9341 driver
-- DFRobot's DFPlayer Mini
+- [ESP-C3-32S-Kit ESP32 WiFi+Bluetooth Development Board](https://www.waveshare.com/esp-c3-32s-kit.htm) with ESP32C3 chip from Ai-Thinker which I have "tuned" to get rid of the built-in LEDs. 
+- [RGB-Rotary encoder](https://www.sparkfun.com/products/15141)
+- [2.4 inch display with ILI9341 driver](https://www.waveshare.com/2.4inch-lcd-module.htm)
+- [DFRobot's DFPlayer Mini](https://www.dfrobot.com/product-1121.html)
 - Light sensor
+- Speaker
 - Resistance, capacitors, wires...
 
 ### Prototype build
-(picture)
-### Further ideas
-- Board
-- Case
-etc
+![](hardware/pictures/breadbord_prototype.png)
+### Further ideas and open tasks
+[ ] Choose an adequate speaker
+[ ] Create a custom board to connect everything together
+[ ] Design a nice case
+### Possible modifications and variants
+The above components are just what I could get my hands on or what made sense to me. Here some considerations:
+- It should be possible to use any other ESP32 board, specially ESP32C3 like the official [ESP32-C3-DevKitM-1](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/hw-reference/esp32c3/user-guide-devkitm-1.html) from Espressif. But the board design and/or pin assignments defined in [clock_common.hpp](src/clock_common.hpp) may need a corresponding adjustment.
+- The light functions of the rotary encoder are not required for the clock to work. A normal rotary encoder should work. Also the [RG-rotary encoder](https://www.sparkfun.com/products/15140) from Sparkfun should work exactly the same as the one I used.
+- Other LCD displays could work as well, specially if the same ILI9341 driver is used, but maybe other settings are required.
 
 ## Software
 This part of the documentation is still work in progress, as the software itself. Just as a teaser: in order to compile and flash the SW I used:
@@ -43,6 +47,4 @@ Copyright (c) 2022 javiser
 `crescendo-clock` is distributed under the terms of the MIT License.
 
 See the [LICENSE](LICENSE) for license details.
-
-Credits / inspirations:
 
