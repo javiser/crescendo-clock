@@ -5,7 +5,7 @@
 #include "driver/ledc.h"
 #include <display.hpp>
 // TODO This is a temporary custom font
-#include <Antonio_SemiBold30pt7b.h>
+#include <Antonio_SemiBold75pt7b.h>
 
 #include "esp_log.h"
 static const char *TAG = "display";
@@ -104,7 +104,7 @@ void Display::updateContent(display_element_t element, void *value, display_acti
                 default:
                     break;
             }
-            lcd.drawString(time_buf, lcd.width() / 2, 15, &Antonio_SemiBold30pt7b);
+            lcd.drawString(time_buf, lcd.width() / 2, 10, &Antonio_SemiBold75pt7b);
             break;
 
         case D_E_ALARM_TIME:
