@@ -147,7 +147,7 @@ QueueHandle_t RotaryEncoder::init(gpio_num_t A, gpio_num_t B, gpio_num_t button)
     gpio_pad_select_gpio(pin_button);
     gpio_set_pull_mode(pin_a, GPIO_PULLUP_ONLY);
     gpio_set_pull_mode(pin_b, GPIO_PULLUP_ONLY);
-    gpio_set_pull_mode(pin_button, GPIO_PULLUP_ONLY);
+    gpio_set_pull_mode(pin_button, GPIO_PULLUP_PULLDOWN);
     gpio_set_direction(pin_a, GPIO_MODE_INPUT);
     gpio_set_direction(pin_b, GPIO_MODE_INPUT);
     gpio_set_direction(pin_button, GPIO_MODE_INPUT);
