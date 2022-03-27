@@ -73,8 +73,8 @@ void RotaryEncoder::rotationInterruptHandler(void *pvParameter) {
 
 void RotaryEncoder::processEncoderInterrupt() {
     int s = encoder_state & 3;
-    if (gpio_get_level(pin_a)) s |= 4;
-    if (gpio_get_level(pin_b)) s |= 8;
+    if (gpio_get_level(pin_a)) s |= 8;
+    if (gpio_get_level(pin_b)) s |= 4;
 
     switch (s) {
         case 1:
