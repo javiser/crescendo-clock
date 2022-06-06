@@ -41,37 +41,6 @@ void Display::init(void) {
     ESP_ERROR_CHECK(adc1_config_width(ADC_WIDTH_BIT_12));
     ESP_ERROR_CHECK(adc1_config_channel_atten(LIGHT_ADC_CHANNEL, LIGHT_ADC_ATTEN));
 
-    // Configuration for the R/G LEDs of the rotary encoder. LEDC PWM timer configuration first
-    ledc_timer_config_t ledc_timer = {
-        .speed_mode = LEDC_LOW_SPEED_MODE,
-        .duty_resolution = LEDC_TIMER_8_BIT,
-        .timer_num = LEDC_TIMER_0,
-        .freq_hz = 5000,  // Set output frequency at 5 kHz
-        .clk_cfg = LEDC_AUTO_CLK};
-    ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
-
-    // Prepare and then apply the LEDC PWM channels configuration
-    ledc_channel_config_t ledc_channel_red = {
-        .gpio_num = ROT_ENC_LED_R_GPIO,
-        .speed_mode = LEDC_LOW_SPEED_MODE,
-        .channel = LEDC_CHANNEL_RED,
-        .intr_type = LEDC_INTR_DISABLE,
-        .timer_sel = LEDC_TIMER_0,
-        // TODO There is a bug in esp-idf that forces me to put 256 here
-        .duty = 256,  // Set duty to 0% (inverted)
-        .hpoint = 0};
-    ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel_red));
-
-    ledc_channel_config_t ledc_channel_green = {
-        .gpio_num = ROT_ENC_LED_G_GPIO,
-        .speed_mode = LEDC_LOW_SPEED_MODE,
-        .channel = LEDC_CHANNEL_GREEN,
-        .intr_type = LEDC_INTR_DISABLE,
-        .timer_sel = LEDC_TIMER_0,
-        .duty = 256,  // Set duty to 0% (inverted)
-        .hpoint = 0};
-    ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel_green));
-
     ledc_fade_func_install(0);    
 
     // TODO When I didn't have debug information in controlBrightness I could set the stack to 768 (but not 512)
