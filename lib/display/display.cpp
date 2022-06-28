@@ -41,8 +41,6 @@ void Display::init(void) {
     ESP_ERROR_CHECK(adc1_config_width(ADC_WIDTH_BIT_12));
     ESP_ERROR_CHECK(adc1_config_channel_atten(LIGHT_ADC_CHANNEL, LIGHT_ADC_ATTEN));
 
-    ledc_fade_func_install(0);    
-
     // TODO When I didn't have debug information in controlBrightness I could set the stack to 768 (but not 512)
     xTaskCreate(this->monitorBrightnessTask, "monitor_brightness_task", 2048, this, 1, NULL);
     queue = xQueueCreate(1, sizeof(bool));
@@ -170,10 +168,12 @@ void Display::controlBrightness(void) {
         number_of_retries++;
     }
 
-    if (ambient_light == 0)
+    if (ambient_light == 0) {
         // We could not read the ambient light, we try again in the next iteration
         return;
+    }
 
+    // TODO To be honest, I don't understand the "!ambient_light" part, as if ==0 we return control earlier
     if (max_brightness_requested || !ambient_light) {
         setBrightness(DISPLAY_BRIGHTNESS_LEVELS_NR);
     } else {

@@ -38,17 +38,18 @@ void TimeState::buttonShortPressed(ClockMachine* clock) {
         // Invert the alarm state but only if the display was already on
         display_action_t action = clock->is_alarm_set ? D_A_OFF : D_A_ON;
         clock->is_alarm_set = !clock->is_alarm_set;
-        if (clock->is_alarm_set) {
-            clock->getPlayer()->setVolume(10);
-            clock->getPlayer()->playTrack(clock->settings.melody_nr);  // TODO Replace this with the current melody set
-        }
+        // TODO I am not sure if I want to have this part, because I am experiencing problems with the MP3 player doing this
+        // if (clock->is_alarm_set) {
+        //     clock->getPlayer()->setVolume(10);
+        //     clock->getPlayer()->playTrack(clock->settings.melody_nr);  // TODO Replace this with the current melody set
+        // }
         clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, action);
     }
     clock->getDisplay()->setIncreasedBrightness(true);
     clock->triggerTimer(3000);
 
     // TODO Just for debugging, to stop the silly animation
-    clock->getDisplay()->updateContent(D_E_TEST, NULL, D_A_OFF);
+    //clock->getDisplay()->updateContent(D_E_TEST, NULL, D_A_OFF);
 }
 
 void TimeState::buttonLongPressed(ClockMachine* clock) {
@@ -57,10 +58,10 @@ void TimeState::buttonLongPressed(ClockMachine* clock) {
 
 void TimeState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t position, rotary_encoder_dir_t direction) {
     // TODO Just for debugging, to start a silly animation
-    if (direction == DIR_RIGHT)
-        clock->getDisplay()->updateContent(D_E_TEST, NULL, D_A_RIGHT);
-    else
-        clock->getDisplay()->updateContent(D_E_TEST, NULL, D_A_LEFT);
+    // if (direction == DIR_RIGHT)
+    //     clock->getDisplay()->updateContent(D_E_TEST, NULL, D_A_RIGHT);
+    // else
+    //     clock->getDisplay()->updateContent(D_E_TEST, NULL, D_A_LEFT);
 }
 
 void TimeState::exit(ClockMachine* clock) {
