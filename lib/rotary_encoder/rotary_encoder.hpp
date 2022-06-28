@@ -64,7 +64,7 @@ class RotaryEncoder {
     void processEncoderInterrupt();
 
    public:
-    QueueHandle_t init(gpio_num_t pin_a, gpio_num_t pin_b, gpio_num_t pin_button);
+    QueueHandle_t init(gpio_num_t pin_a, gpio_num_t pin_b, gpio_num_t pin_button, bool inverted);
     void setRange(rotary_encoder_pos_t min, rotary_encoder_pos_t max, rotary_encoder_pos_t step, bool wrap);
     void setPosition(rotary_encoder_pos_t position);
     rotary_encoder_pos_t getPosition();

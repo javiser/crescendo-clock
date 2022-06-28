@@ -130,7 +130,7 @@ void RotaryEncoder::processEncoderInterrupt() {
     direction = DIR_NONE;  // Reset value after sending event to get ready for the next one
 }
 
-QueueHandle_t RotaryEncoder::init(gpio_num_t A, gpio_num_t B, gpio_num_t button) {
+QueueHandle_t RotaryEncoder::init(gpio_num_t A, gpio_num_t B, gpio_num_t button, bool inverted) {
     pin_a = A;
     pin_b = B;
     pin_button = button;
@@ -157,7 +157,12 @@ QueueHandle_t RotaryEncoder::init(gpio_num_t A, gpio_num_t B, gpio_num_t button)
     gpio_isr_handler_add(pin_b, this->rotationInterruptHandler, this);
 
     debounce.down_time = 0;
-    debounce.inverted = false;
+    if (inverted) {
+        debounce.inverted = true;
+    } else {
+        debounce.inverted = false;
+    }
+
     if (debounce.inverted) debounce.history = 0xffff;
 
     queue = xQueueCreate(1, sizeof(rotary_encoder_event_t));

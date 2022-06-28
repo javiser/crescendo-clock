@@ -38,6 +38,7 @@ extern "C" void app_main() {
                     machine.encoderRotated(event.position, event.direction);
                     break;
                 case BUTTON_SHORT_PRESS:
+                    ESP_LOGI(TAG, "Short press");
                     //ESP_LOGI("main", "Stack = %d", uxTaskGetStackHighWaterMark(NULL));
                     machine.buttonShortPressed();
                     break;
