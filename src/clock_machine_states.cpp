@@ -36,8 +36,8 @@ void TimeState::timerExpired(ClockMachine* clock) {
 void TimeState::buttonShortPressed(ClockMachine* clock) {
     if (clock->getDisplay()->isDisplayOn()) {
         // Invert the alarm state but only if the display was already on
-        display_action_t action = clock->is_alarm_set ? D_A_OFF : D_A_ON;
         clock->is_alarm_set = !clock->is_alarm_set;
+        display_action_t action = clock->is_alarm_set ? D_A_ON : D_A_OFF;        
         // TODO I am not sure if I want to have this part, because I am experiencing problems with the MP3 player doing this
         // if (clock->is_alarm_set) {
         //     clock->getPlayer()->setVolume(10);
@@ -57,6 +57,9 @@ void TimeState::buttonLongPressed(ClockMachine* clock) {
 }
 
 void TimeState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t position, rotary_encoder_dir_t direction) {
+    clock->getDisplay()->setIncreasedBrightness(true);
+    clock->triggerTimer(3000);
+
     // TODO Just for debugging, to start a silly animation
     // if (direction == DIR_RIGHT)
     //     clock->getDisplay()->updateContent(D_E_TEST, NULL, D_A_RIGHT);
