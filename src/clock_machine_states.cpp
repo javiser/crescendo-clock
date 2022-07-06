@@ -190,6 +190,7 @@ void SnoozeState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t posit
         // Yes! Snooze cancellation sequence complete!
         // TODO Maybe some message? But we will be in a new state now ...
         clock->is_alarm_set = false;
+        clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, D_A_OFF);
         clock->setState(TimeState::getInstance());
         ESP_LOGI("S", "Oh man you did it! Alarm is off!");
     }
