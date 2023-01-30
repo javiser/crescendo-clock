@@ -38,10 +38,10 @@ typedef enum {
 
 class Display {
     LGFX_ILI9341 lcd;
-    const uint16_t display_light_thd_down[DISPLAY_BRIGHTNESS_LEVELS_NR] = {40, 70, 100, 140};
-    const uint16_t display_light_thd_up[DISPLAY_BRIGHTNESS_LEVELS_NR] = {50, 85, 120, 160};
+    const uint16_t display_light_thd_down[DISPLAY_BRIGHTNESS_LEVELS_NR] = {24, 25, 60, 100};
+    const uint16_t display_light_thd_up[DISPLAY_BRIGHTNESS_LEVELS_NR] = {30, 35, 80, 120};
     const uint8_t display_light_brightness[DISPLAY_BRIGHTNESS_LEVELS_NR + 1] = {0, 1, 10, 50, 100};
-    uint8_t display_brightness_level = 0;
+    uint8_t display_brightness_level = 2;
     bool max_brightness_requested = false;
     bool increased_brightness_requested = false;
     QueueHandle_t queue;
