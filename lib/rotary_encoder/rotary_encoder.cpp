@@ -1,4 +1,5 @@
 #include "rotary_encoder.hpp"
+#include "esp_timer.h"
 
 void RotaryEncoder::updateButton(button_debounce_t *d) {
     d->history = (d->history << 1) | gpio_get_level(pin_button);
@@ -142,9 +143,6 @@ QueueHandle_t RotaryEncoder::init(gpio_num_t A, gpio_num_t B, gpio_num_t button,
     wrap_values = false;
 
     gpio_install_isr_service(0);
-    gpio_pad_select_gpio(pin_a);
-    gpio_pad_select_gpio(pin_b);
-    gpio_pad_select_gpio(pin_button);
     gpio_set_pull_mode(pin_a, GPIO_PULLUP_ONLY);
     gpio_set_pull_mode(pin_b, GPIO_PULLUP_ONLY);
     gpio_set_pull_mode(pin_button, GPIO_PULLUP_PULLDOWN);

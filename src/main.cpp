@@ -25,7 +25,7 @@ extern "C" void app_main() {
     // INFO rotary encoder 96 stack bytes
     // Initialise the rotary encoder device with the GPIOs for A and B signals
     RotaryEncoder encoder;
-    xQueueHandle event_queue = encoder.init(ROT_ENC_A_GPIO, ROT_ENC_B_GPIO, ROT_ENC_BUTTON_GPIO, ROT_ENC_BUTTON_INVERTED);
+    QueueHandle_t event_queue = encoder.init(ROT_ENC_A_GPIO, ROT_ENC_B_GPIO, ROT_ENC_BUTTON_GPIO, ROT_ENC_BUTTON_INVERTED);
 
     // INFO machine stack size = 1632 bytes
     ClockMachine machine(&encoder);  // By default a clock machine starts in state "TIME"

@@ -60,7 +60,7 @@ void Display::updateContent(display_element_t element, void *value, display_acti
     // TODO I need a display design to arrange everything properly
     switch (element) {
         case D_E_TIME:
-            char time_buf[5];
+            char time_buf[8];
             sprintf(time_buf, "%02d:%02d", static_cast<clock_time_t *>(value)->hour, static_cast<clock_time_t *>(value)->minute);
             lcd.setTextDatum(top_center);
 
@@ -75,7 +75,7 @@ void Display::updateContent(display_element_t element, void *value, display_acti
             break;
 
         case D_E_ALARM_TIME:
-            char alarm_buf[5];
+            char alarm_buf[8];
             sprintf(alarm_buf, "%02d:%02d", static_cast<clock_time_t *>(value)->hour, static_cast<clock_time_t *>(value)->minute);
             alarm_time_sp.setTextColor(TFT_WHITE, TFT_BLACK);  // Normal case
             switch (action) {
@@ -103,7 +103,7 @@ void Display::updateContent(display_element_t element, void *value, display_acti
                     lcd.fillRect(0, 160, 120, 40, TFT_BLACK);
                     break;
                 case D_A_ON:
-                    char snooze_buf[5];
+                    char snooze_buf[8];
                     uint8_t minutes;
                     uint8_t seconds;
                     uint16_t remaining_seconds;
@@ -195,10 +195,11 @@ void Display::controlBrightness(void) {
     // TODO For debugging purposes only, I don't care here about sprites or similar
     char light_buf[10];
     sprintf(light_buf, "%03d (%d)", ambient_light, display_brightness_level);
-    //ESP_LOGI(TAG, "Ambient light = %d", ambient_light);
+    ESP_LOGI(TAG, "Ambient light = %d", ambient_light);
     lcd.setTextDatum(bottom_right);
     lcd.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-    lcd.drawString(light_buf, lcd.width() - 5, lcd.height() - 5, &FreeSans12pt7b);*/
+    lcd.drawString(light_buf, lcd.width() - 5, lcd.height() - 5, &FreeSans12pt7b);
+	*/
 }
 
 void Display::setBrightness(uint8_t brightness_level) {
