@@ -85,7 +85,7 @@ ClockState& AlarmState::getInstance() {
 void AlarmState::enter(ClockMachine* clock) {
     // TODO We need to update the display, but for now I just ignore this
     clock->getDisplay()->setMaxBrightness(true);
-    alarm_volume = 0;
+    alarm_volume = 5;
     clock->getPlayer()->loopTrack(1);
     clock->triggerTimer(10);  // Short trigger to avoid copying code that will be in the timerExpired method
 }
@@ -99,7 +99,7 @@ void AlarmState::timerExpired(ClockMachine* clock) {
         alarm_volume++;
     }
     clock->getPlayer()->setVolume(alarm_volume);
-    clock->triggerTimer(100 * clock->settings.crescendo_factor);
+    clock->triggerTimer(1000 * clock->settings.crescendo_factor);
 }
 
 void AlarmState::buttonShortPressed(ClockMachine* clock) {
