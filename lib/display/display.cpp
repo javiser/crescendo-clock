@@ -171,6 +171,7 @@ void Display::controlBrightness(void) {
 
     // TODO I think that this error is related to the wifi. In theory I could turn off the wifi before I need it again?
     while (ambient_light == 0 and number_of_retries < 3) {
+        ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, LIGHT_ADC_CHANNEL, &adc_raw));
         ambient_light = (uint16_t) adc_raw;
         vTaskDelay(50 / portTICK_PERIOD_MS);
         number_of_retries++;
