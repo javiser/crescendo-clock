@@ -2,6 +2,7 @@
 #define _INCLUDE_DISPLAY_HPP
 
 #include "freertos/queue.h"
+#include "esp_adc/adc_oneshot.h"
 #include "lgfx_ili9341.hpp"
 
 #define DISPLAY_BRIGHTNESS_LEVELS_NR    4  // Not including the off-level!
@@ -38,6 +39,7 @@ typedef enum {
 
 class Display {
     LGFX_ILI9341 lcd;
+    adc_oneshot_unit_handle_t adc1_handle;
     const uint16_t display_light_thd_down[DISPLAY_BRIGHTNESS_LEVELS_NR] = {24, 25, 60, 100};
     const uint16_t display_light_thd_up[DISPLAY_BRIGHTNESS_LEVELS_NR] = {30, 35, 80, 120};
     const uint8_t display_light_brightness[DISPLAY_BRIGHTNESS_LEVELS_NR + 1] = {0, 1, 10, 50, 100};

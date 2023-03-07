@@ -20,7 +20,7 @@
 #define MP3_PLAYER_TX       GPIO_NUM_4
 #define MP3_PLAYER_RX       GPIO_NUM_5
 
-#define LIGHT_ADC_CHANNEL   ADC1_CHANNEL_0  // = GPIO0
+#define LIGHT_ADC_CHANNEL   ADC_CHANNEL_0  // = GPIO0
 #define LIGHT_ADC_ATTEN     ADC_ATTEN_DB_0
 
 typedef struct {

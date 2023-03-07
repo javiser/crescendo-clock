@@ -1,7 +1,6 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
-#include "driver/adc.h"
 #include "driver/ledc.h"
 #include <display.hpp>
 // TODO This is a temporary custom font
@@ -38,8 +37,16 @@ void Display::init(void) {
     alarm_time_sp.setTextDatum(middle_center);
 
     // ADC1 config for light sensor
-    ESP_ERROR_CHECK(adc1_config_width(ADC_WIDTH_BIT_12));
-    ESP_ERROR_CHECK(adc1_config_channel_atten(LIGHT_ADC_CHANNEL, LIGHT_ADC_ATTEN));
+    adc_oneshot_unit_init_cfg_t init_config1 = {
+        .unit_id = ADC_UNIT_1,
+        .ulp_mode = ADC_ULP_MODE_DISABLE,
+    };
+    ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config1, &adc1_handle));    
+    adc_oneshot_chan_cfg_t config = {
+        .atten = LIGHT_ADC_ATTEN,
+        .bitwidth = ADC_BITWIDTH_12,
+    };
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, LIGHT_ADC_CHANNEL, &config));
 
     // TODO When I didn't have debug information in controlBrightness I could set the stack to 768 (but not 512)
     xTaskCreate(this->monitorBrightnessTask, "monitor_brightness_task", 2048, this, 1, NULL);
@@ -158,12 +165,13 @@ void Display::animateStuff(void) {
 }
 
 void Display::controlBrightness(void) {
+    int adc_raw;
     uint16_t ambient_light = 0;
     uint8_t number_of_retries = 0;
 
     // TODO I think that this error is related to the wifi. In theory I could turn off the wifi before I need it again?
     while (ambient_light == 0 and number_of_retries < 3) {
-        ambient_light = (uint16_t)adc1_get_raw(LIGHT_ADC_CHANNEL);
+        ambient_light = (uint16_t) adc_raw;
         vTaskDelay(50 / portTICK_PERIOD_MS);
         number_of_retries++;
     }
