@@ -1,14 +1,11 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "nvs_flash.h"
-#include "esp_log.h"
 #include <wifi_time.hpp>
 #include <rotary_encoder.hpp>
 #include "clock_machine.hpp"
 #include "clock_machine_states.hpp"
 #include "clock_common.hpp"
-
-static const char *TAG = "main";
 
 extern "C" void app_main() {
     // INFO NVS initialization needs 560 bytes stack!
@@ -38,8 +35,6 @@ extern "C" void app_main() {
                     machine.encoderRotated(event.position, event.direction);
                     break;
                 case BUTTON_SHORT_PRESS:
-                    ESP_LOGI(TAG, "Short press");
-                    //ESP_LOGI("main", "Stack = %d", uxTaskGetStackHighWaterMark(NULL));
                     machine.buttonShortPressed();
                     break;
                 case BUTTON_LONG_PRESS:

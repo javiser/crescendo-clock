@@ -18,8 +18,6 @@ class ClockState;
 class ClockMachine {
   public:
     ClockMachine(RotaryEncoder* encoder_ref);
-    // TODO So far I never needed this method, remove when it's clear that I don't need it
-    // inline ClockState* getCurrentState() const {return state;}
     void saveAlarmTimeInNVS();
     void saveSettingsInNVS();
     void setState(ClockState& newState);

@@ -38,11 +38,6 @@ void TimeState::buttonShortPressed(ClockMachine* clock) {
         // Invert the alarm state but only if the display was already on
         clock->is_alarm_set = !clock->is_alarm_set;
         display_action_t action = clock->is_alarm_set ? D_A_ON : D_A_OFF;        
-        // TODO I am not sure if I want to have this part, because I am experiencing problems with the MP3 player doing this
-        // if (clock->is_alarm_set) {
-        //     clock->getPlayer()->setVolume(10);
-        //     clock->getPlayer()->playTrack(clock->settings.melody_nr);  // TODO Replace this with the current melody set
-        // }
         clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, action);
     }
     clock->getDisplay()->setIncreasedBrightness(true);
@@ -86,7 +81,7 @@ void AlarmState::enter(ClockMachine* clock) {
     // TODO We need to update the display, but for now I just ignore this
     clock->getDisplay()->setMaxBrightness(true);
     alarm_volume = 5;
-    clock->getPlayer()->loopTrack(1);
+    clock->getPlayer()->loopTrack(clock->settings.melody_nr);
     clock->triggerTimer(10);  // Short trigger to avoid copying code that will be in the timerExpired method
 }
 
