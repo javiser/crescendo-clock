@@ -1,6 +1,5 @@
 #include "clock_machine_states.hpp"
-//#include <display.hpp>
-#include <wifi_time.hpp>
+
 #include "esp_log.h"
 
 //--------------//
@@ -219,6 +218,8 @@ void SetAlarmState::enter(ClockMachine* clock) {
     clock->triggerTimer(500);
     clock->getEncoder()->setRange(0, 23, true, true);
     clock->getEncoder()->setPosition(clock->alarm_time.hour);
+    original_alarm_time.hour = clock->alarm_time.hour;
+    original_alarm_time.minute = clock->alarm_time.minute;
 }
 
 void SetAlarmState::run(ClockMachine* clock) {
@@ -255,7 +256,10 @@ void SetAlarmState::buttonShortPressed(ClockMachine* clock) {
 }
 
 void SetAlarmState::buttonLongPressed(ClockMachine* clock) {
-    // TODO Button long press action does not have any effect when setting the alarm time. But maybe we want to use it to cancel this? If yes, I need to rework the exit function
+    // Cancel the alarm setting and restore the original times
+    clock->alarm_time.hour = original_alarm_time.hour;
+    clock->alarm_time.minute = original_alarm_time.minute;
+    clock->setState(TimeState::getInstance());
 }
 
 void SetAlarmState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t position, rotary_encoder_dir_t direction) {

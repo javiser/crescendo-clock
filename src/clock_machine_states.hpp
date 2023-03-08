@@ -2,7 +2,7 @@
 #define _INCLUDE_CLOCK_MACHINE_STATES_HPP_
 
 #include <rotary_encoder.hpp>
-
+#include <wifi_time.hpp>
 #include "clock_machine.hpp"
 
 #define NUMBER_MELODIES     3
@@ -91,6 +91,7 @@ class SetAlarmState : public ClockState {
     bool hours_hidden = false;
     bool minutes_hidden = false;
     bool setting_minutes = false;
+    clock_time_t original_alarm_time;
 };
 
 #endif // _INCLUDE_CLOCK_MACHINE_STATES_HPP_
