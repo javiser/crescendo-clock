@@ -167,23 +167,16 @@ void Display::animateStuff(void) {
 void Display::controlBrightness(void) {
     int adc_raw;
     uint16_t ambient_light = 0;
-    uint8_t number_of_retries = 0;
 
-    // TODO I think that this error is related to the wifi. In theory I could turn off the wifi before I need it again?
-    while (ambient_light == 0 and number_of_retries < 3) {
-        ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, LIGHT_ADC_CHANNEL, &adc_raw));
-        ambient_light = (uint16_t) adc_raw;
-        vTaskDelay(50 / portTICK_PERIOD_MS);
-        number_of_retries++;
-    }
+    ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, LIGHT_ADC_CHANNEL, &adc_raw));
+    ambient_light = (uint16_t)adc_raw;
 
     if (ambient_light == 0) {
         // We could not read the ambient light, we try again in the next iteration
         return;
     }
 
-    // TODO To be honest, I don't understand the "!ambient_light" part, as if ==0 we return control earlier
-    if (max_brightness_requested || !ambient_light) {
+    if (max_brightness_requested) {
         setBrightness(DISPLAY_BRIGHTNESS_LEVELS_NR);
     } else {
         // Adjust the brightness level if necessary
