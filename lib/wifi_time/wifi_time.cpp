@@ -173,9 +173,6 @@ void WifiTime::getTime(clock_time_t *t) {
 }
 
 void WifiTime::mqttAppStart(void) {
-    #ifdef _DEBUG
-    ESP_LOGI(TAG, "Starting MQTT");
-    #endif
     esp_mqtt_client_config_t mqttConfig = {};
     mqttConfig.broker.address.uri = MQTT_BROKER_ADDRESS;
     mqttConfig.credentials.username = MQTT_USERNAME;
@@ -202,7 +199,6 @@ void WifiTime::mqttEventHandler(void *arg, esp_event_base_t base, int32_t event_
     switch ((esp_mqtt_event_id_t)event_id) {
         case MQTT_EVENT_CONNECTED:
             mqtt_is_connected = true;
-            ESP_LOGI(TAG, "Fuck, MQTT Connected!");
 
             //msg_id = esp_mqtt_client_subscribe(client, "/topic/test1", 0);
             //ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);

@@ -155,6 +155,7 @@ void SnoozeState::run(ClockMachine* clock) {
 void SnoozeState::timerExpired(ClockMachine* clock) {
     clock->getDisplay()->setIncreasedBrightness(false);
     snooze_leaving_step = SNOOZE_WAITING;
+    clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, NULL, D_A_OFF);
     //ESP_LOGI("S", "Back to the start position");
 }
 
@@ -167,30 +168,28 @@ void SnoozeState::buttonShortPressed(ClockMachine* clock) {
 
 void SnoozeState::buttonLongPressed(ClockMachine* clock) {
     if (snooze_leaving_step == SNOOZE_FIRST_ROTATION) {
-        // TODO I need some visual and/or acoustic feedback about this process. i.e. show help message: now another rotation!
         snooze_leaving_step = SNOOZE_LONG_PRESS;
-        //ESP_LOGI("S", "Yes! Now a rotation in the other direction!!!");
+        clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, NULL, D_A_TWO_BARS);
+        //Yes! Now a rotation in the other direction!!!
     }
     // No matter in what state are we, 3 seconds more light.
-    // TODO maybe also some display text for help?
     clock->getDisplay()->setIncreasedBrightness(true);
     clock->triggerTimer(3000);
 }
 
 void SnoozeState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t position, rotary_encoder_dir_t direction) {
     if (snooze_leaving_step == SNOOZE_WAITING) {
-        // TODO Show help message: now long press!
         snooze_leaving_step = SNOOZE_FIRST_ROTATION;
         first_rotation_dir = direction;
-        //ESP_LOGI("S", "Now a long press...");
+        clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, NULL, D_A_ONE_BAR);
+        // Now a long press...
     } else if (snooze_leaving_step == SNOOZE_LONG_PRESS and direction != first_rotation_dir) {
         // Yes! Snooze cancellation sequence complete!
-        // TODO Maybe some message? But we will be in a new state now ...
+        clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, NULL, D_A_OFF);
         clock->is_alarm_set = false;
         clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, D_A_OFF);
         clock->getWifiTime()->stopWakeUpLight();
         clock->setState(TimeState::getInstance());
-        //ESP_LOGI("S", "Oh man you did it! Alarm is off!");
     }
 
     // Otherwise we are in the first rotation step, keep the window alive.

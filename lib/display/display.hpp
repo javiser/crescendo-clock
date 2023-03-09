@@ -26,6 +26,7 @@ typedef enum {
     D_E_ALARM_TIME,
     D_E_ALARM_ACTIVE,
     D_E_SNOOZE_TIME,
+    D_E_SNOOZE_CANCEL,
     D_E_WIFI_STATUS,
     D_E_MQTT_STATUS,
 } display_element_t;
@@ -35,6 +36,8 @@ typedef enum {
     D_A_ON,
     D_A_HIDE_HOURS,
     D_A_HIDE_MINUTES,
+    D_A_ONE_BAR,
+    D_A_TWO_BARS,
 } display_action_t;
 
 typedef enum {

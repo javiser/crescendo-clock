@@ -125,6 +125,29 @@ void Display::updateContent(display_element_t element, void *value, display_acti
             lcd.drawString(snooze_buf, 230, 200, &Antonio_Regular26pt7b);
             break;
 
+        case D_E_SNOOZE_CANCEL:
+            switch (action) {
+                case D_A_OFF:
+                    // Clear all the bars
+                    lcd.setColor(TFT_BLACK);
+                    lcd.fillRect(160, 160, 75, 5);
+                    break;
+                case D_A_ONE_BAR:
+                    // Draw only the first bar
+                    lcd.setColor(TFT_ORANGE);
+                    lcd.fillRect(160, 160, 35, 5);
+                    break;
+                case D_A_TWO_BARS:
+                    // Draw only the second bar
+                    lcd.setColor(TFT_ORANGE);
+                    lcd.fillRect(200, 160, 35, 5);
+                    break;
+                default:
+                    // There is no "case 3" where all 3 bars are shown
+                    break;
+            }
+            break;
+
         case D_E_WIFI_STATUS:
             lcd.setTextDatum(middle_center);
             switch (action) {
