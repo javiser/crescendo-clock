@@ -149,13 +149,6 @@ bool WifiTime::isWifiConnected(void) {
 }
 
 void WifiTime::setTime(struct tm *timeinfo) {
-    // TODO I am not interested in the date I believe
-    // timeinfo->tm_year = 2022 - 1900;
-    // timeinfo->tm_mon = 0;
-    // timeinfo->tm_mday = 26;
-    // timeinfo->tm_hour = 13;
-    // timeinfo->tm_min = 58;
-    // timeinfo->tm_sec = 30;
     time_t t = mktime(timeinfo);
     struct timeval now_set = {.tv_sec = t, .tv_usec = 0};
     settimeofday(&now_set, NULL);

@@ -13,7 +13,6 @@ ClockState& TimeState::getInstance() {
 
 void TimeState::enter(ClockMachine* clock) {
     clock->getDisplay()->updateContent(D_E_TIME, &clock->stored_time, D_A_ON);
-    // TODO I need to set the proper encoder values here. I guess 0 to number of setting states or similar (I don't really understand this TODO anymore)
 }
 
 void TimeState::run(ClockMachine* clock) {
@@ -68,7 +67,6 @@ ClockState& AlarmState::getInstance() {
 }
 
 void AlarmState::enter(ClockMachine* clock) {
-    // TODO We need to update the display with some alarm information, but for now I just ignore this
     clock->getDisplay()->setMaxBrightness(true);
     alarm_volume = 5;
     crescendo_counter = 0;
@@ -160,8 +158,6 @@ void SnoozeState::timerExpired(ClockMachine* clock) {
 }
 
 void SnoozeState::buttonShortPressed(ClockMachine* clock) {
-    // TODO Maybe show some text about how to stop the snooze? A sequence? rotate, long press, rotate?
-    //ESP_LOGI("S", "You have to rotate - long press - rotate in the other direction...");
     clock->getDisplay()->setIncreasedBrightness(true);
     clock->triggerTimer(3000);
 }
