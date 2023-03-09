@@ -13,7 +13,7 @@ ClockState& TimeState::getInstance() {
 
 void TimeState::enter(ClockMachine* clock) {
     clock->getDisplay()->updateContent(D_E_TIME, &clock->stored_time, D_A_ON);
-    // TODO I need to set the proper encoder values here. I guess 0 to number of setting states or similar
+    // TODO I need to set the proper encoder values here. I guess 0 to number of setting states or similar (I don't really understand this TODO anymore)
 }
 
 void TimeState::run(ClockMachine* clock) {
@@ -71,8 +71,10 @@ void AlarmState::enter(ClockMachine* clock) {
     // TODO We need to update the display with some alarm information, but for now I just ignore this
     clock->getDisplay()->setMaxBrightness(true);
     alarm_volume = 5;
+    crescendo_counter = 0;
     clock->getPlayer()->loopTrack(clock->settings.melody_nr);
     clock->triggerTimer(10);  // Short trigger to avoid copying code that will be in the timerExpired method
+    clock->getWifiTime()->wakeUpLight();
 }
 
 void AlarmState::run(ClockMachine* clock) {
@@ -80,11 +82,20 @@ void AlarmState::run(ClockMachine* clock) {
 }
 
 void AlarmState::timerExpired(ClockMachine* clock) {
-    if (alarm_volume < 30) {
-        alarm_volume++;
+    crescendo_counter++;
+    if (crescendo_counter == clock->settings.crescendo_factor) {
+        crescendo_counter = 0;
+        if (alarm_volume < 30) {
+            alarm_volume++;
+            clock->getPlayer()->setVolume(alarm_volume);
+        }
     }
-    clock->getPlayer()->setVolume(alarm_volume);
-    clock->triggerTimer(1000 * clock->settings.crescendo_factor);
+    clock->triggerTimer(500);
+
+    display_action_t action;
+    action = alarm_symbol_direction ? D_A_OFF : D_A_ON;
+    alarm_symbol_direction = !alarm_symbol_direction;
+    clock->getDisplay()->updateContent(D_E_ALARM_ACTIVE, NULL, action);
 }
 
 void AlarmState::buttonShortPressed(ClockMachine* clock) {
@@ -103,6 +114,7 @@ void AlarmState::exit(ClockMachine* clock) {
     // TODO There is some problem with noise after stopping the alarm. Resetting the module via HW does not help
     clock->getPlayer()->stopTrack();
     clock->getDisplay()->setMaxBrightness(false);
+    clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, D_A_ON);
 }
 
 AlarmState::~AlarmState() {}
@@ -143,12 +155,12 @@ void SnoozeState::run(ClockMachine* clock) {
 void SnoozeState::timerExpired(ClockMachine* clock) {
     clock->getDisplay()->setIncreasedBrightness(false);
     snooze_leaving_step = SNOOZE_WAITING;
-    ESP_LOGI("S", "Back to the start position");
+    //ESP_LOGI("S", "Back to the start position");
 }
 
 void SnoozeState::buttonShortPressed(ClockMachine* clock) {
     // TODO Maybe show some text about how to stop the snooze? A sequence? rotate, long press, rotate?
-    ESP_LOGI("S", "You have to rotate - long press - rotate in the other direction...");
+    //ESP_LOGI("S", "You have to rotate - long press - rotate in the other direction...");
     clock->getDisplay()->setIncreasedBrightness(true);
     clock->triggerTimer(3000);
 }
@@ -157,7 +169,7 @@ void SnoozeState::buttonLongPressed(ClockMachine* clock) {
     if (snooze_leaving_step == SNOOZE_FIRST_ROTATION) {
         // TODO I need some visual and/or acoustic feedback about this process. i.e. show help message: now another rotation!
         snooze_leaving_step = SNOOZE_LONG_PRESS;
-        ESP_LOGI("S", "Yes! Now a rotation in the other direction!!!");
+        //ESP_LOGI("S", "Yes! Now a rotation in the other direction!!!");
     }
     // No matter in what state are we, 3 seconds more light.
     // TODO maybe also some display text for help?
@@ -170,14 +182,15 @@ void SnoozeState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t posit
         // TODO Show help message: now long press!
         snooze_leaving_step = SNOOZE_FIRST_ROTATION;
         first_rotation_dir = direction;
-        ESP_LOGI("S", "Now a long press...");
+        //ESP_LOGI("S", "Now a long press...");
     } else if (snooze_leaving_step == SNOOZE_LONG_PRESS and direction != first_rotation_dir) {
         // Yes! Snooze cancellation sequence complete!
         // TODO Maybe some message? But we will be in a new state now ...
         clock->is_alarm_set = false;
         clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, D_A_OFF);
+        clock->getWifiTime()->stopWakeUpLight();
         clock->setState(TimeState::getInstance());
-        ESP_LOGI("S", "Oh man you did it! Alarm is off!");
+        //ESP_LOGI("S", "Oh man you did it! Alarm is off!");
     }
 
     // Otherwise we are in the first rotation step, keep the window alive.

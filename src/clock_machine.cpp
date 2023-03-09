@@ -27,6 +27,13 @@ ClockMachine::ClockMachine(RotaryEncoder* encoder_ref) {
         ESP_ERROR_CHECK(readNVSValues());
     }
 
+    // Upon clock start the alarm is always off
+    display.updateContent(D_E_ALARM_TIME, &alarm_time, D_A_OFF);
+
+    // We initialize with the opposite values to force a display update in the next run
+    last_wifi_connected_status = !wifi_time.isWifiConnected();
+    last_mqtt_connected_status = !wifi_time.isMQTTConnected();
+
     state = static_cast<ClockState*>(new TimeState());
     state->enter(this);
 }
@@ -121,6 +128,21 @@ void ClockMachine::run() {
         state->timerExpired(this);
     } else {
         state->run(this);
+    }
+    // Keep track of wifi and mqtt status symbols
+    bool wifi_connected_status = wifi_time.isWifiConnected();
+    if (last_wifi_connected_status != wifi_connected_status)
+    {
+        last_wifi_connected_status = wifi_connected_status;
+        display_action_t wifi_action = wifi_connected_status ? D_A_ON : D_A_OFF; 
+        display.updateContent(D_E_WIFI_STATUS, NULL, wifi_action);
+    }
+    bool mqtt_connected_status = wifi_time.isMQTTConnected();
+    if (last_mqtt_connected_status != mqtt_connected_status)
+    {
+        last_mqtt_connected_status = mqtt_connected_status;
+        display_action_t mqtt_action = mqtt_connected_status ? D_A_ON : D_A_OFF; 
+        display.updateContent(D_E_MQTT_STATUS, NULL, mqtt_action);
     }
 }
 

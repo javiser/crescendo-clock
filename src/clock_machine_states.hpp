@@ -50,6 +50,8 @@ class AlarmState : public ClockState {
 
    private:
     uint8_t alarm_volume;
+    uint8_t crescendo_counter;
+    bool alarm_symbol_direction = false;
 };
 
 class SnoozeState : public ClockState {

@@ -1,5 +1,7 @@
 #include <string.h>
 #include <wifi_time.hpp>
+// TODO it should be possible to add this without relative paths
+#include "../../src/credentials.hpp"
 
 // TODO Actually I am not sure what is the downside of using ESP_LOG. Maybe more stack demand? Runtime? No idea
 //#define _DEBUG
@@ -8,7 +10,10 @@
 static const char *TAG = "wifi_time";
 #endif
 
-void WifiTime::eventHandler(void *pvParameter, esp_event_base_t event_base, int32_t event_id, void *event_data) {
+// TODO I would have liked to add this as a class member but I don't know how to solve it
+static bool mqtt_is_connected = false;
+
+void WifiTime::wifiEventHandler(void *pvParameter, esp_event_base_t event_base, int32_t event_id, void *event_data) {
     WifiTime *pThis = (WifiTime *)pvParameter;
 
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
@@ -55,6 +60,7 @@ void WifiTime::monitorWifi(void) {
         ESP_LOGI(TAG, "Connected to: %s", ESP_WIFI_SSID);
         #endif
         wifi_is_connected = true;
+        mqttAppStart();
     } 
     #ifdef _DEBUG
     else if (bits & WIFI_FAIL_BIT) {
@@ -91,8 +97,8 @@ void WifiTime::initSTA(void) {
 
     esp_event_handler_instance_t instance_any_id;
     esp_event_handler_instance_t instance_got_ip;
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, this->eventHandler, this, &instance_any_id));
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, this->eventHandler, this, &instance_got_ip));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, this->wifiEventHandler, this, &instance_any_id));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, this->wifiEventHandler, this, &instance_got_ip));
 
     wifi_config_t wifi_config = {};
     strcpy((char*)wifi_config.sta.ssid, ESP_WIFI_SSID);
@@ -106,8 +112,8 @@ void WifiTime::initSTA(void) {
 
     esp_wifi_set_storage(WIFI_STORAGE_FLASH);
 
-    // TODO I decreased the stack size from 4096 to 1024 and seems to be working fine
-    xTaskCreate(this->monitorWifiTask, "monitor_wifi_task", 1024, this, 10, NULL);
+    // TODO I decreased the stack size from 4096 to 1024 for a guest wifi, but in the real wifi there was stack overflow, so back to 4096. What is the right spot?
+    xTaskCreate(this->monitorWifiTask, "monitor_wifi_task", 4096, this, 10, NULL);
 }
 
 void WifiTime::initSNTP(void) {
@@ -164,4 +170,92 @@ void WifiTime::getTime(clock_time_t *t) {
 
     t->hour = (uint8_t)timeinfo.tm_hour;
     t->minute = (uint8_t)timeinfo.tm_min;
+}
+
+void WifiTime::mqttAppStart(void) {
+    #ifdef _DEBUG
+    ESP_LOGI(TAG, "Starting MQTT");
+    #endif
+    esp_mqtt_client_config_t mqttConfig = {};
+    mqttConfig.broker.address.uri = MQTT_BROKER_ADDRESS;
+    mqttConfig.credentials.username = MQTT_USERNAME;
+    mqttConfig.credentials.authentication.password = MQTT_PASSWORD;
+
+    mqtt_client = esp_mqtt_client_init(&mqttConfig);
+    ESP_ERROR_CHECK(esp_mqtt_client_register_event(mqtt_client, MQTT_EVENT_ERROR, mqttEventHandler, NULL));
+	ESP_ERROR_CHECK(esp_mqtt_client_register_event(mqtt_client, MQTT_EVENT_CONNECTED, mqttEventHandler, NULL));
+	ESP_ERROR_CHECK(esp_mqtt_client_register_event(mqtt_client, MQTT_EVENT_DISCONNECTED, mqttEventHandler, NULL));
+	ESP_ERROR_CHECK(esp_mqtt_client_register_event(mqtt_client, MQTT_EVENT_SUBSCRIBED, mqttEventHandler, NULL));
+	ESP_ERROR_CHECK(esp_mqtt_client_register_event(mqtt_client, MQTT_EVENT_UNSUBSCRIBED, mqttEventHandler, NULL));
+	ESP_ERROR_CHECK(esp_mqtt_client_register_event(mqtt_client, MQTT_EVENT_PUBLISHED, mqttEventHandler, NULL));
+	ESP_ERROR_CHECK(esp_mqtt_client_register_event(mqtt_client, MQTT_EVENT_DATA, mqttEventHandler, NULL));
+	ESP_ERROR_CHECK(esp_mqtt_client_register_event(mqtt_client, MQTT_EVENT_BEFORE_CONNECT, mqttEventHandler, NULL));
+    ESP_ERROR_CHECK(esp_mqtt_client_start(mqtt_client));
+}
+
+void WifiTime::mqttEventHandler(void *arg, esp_event_base_t base, int32_t event_id, void *event_data) {
+    // ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
+    //ESP_LOGD(TAG, "Event dispatched");
+    esp_mqtt_event_handle_t event = (esp_mqtt_event_handle_t)event_data;
+    esp_mqtt_client_handle_t client = event->client;
+    //int msg_id;
+    switch ((esp_mqtt_event_id_t)event_id) {
+        case MQTT_EVENT_CONNECTED:
+            mqtt_is_connected = true;
+            ESP_LOGI(TAG, "Fuck, MQTT Connected!");
+
+            //msg_id = esp_mqtt_client_subscribe(client, "/topic/test1", 0);
+            //ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+
+            //msg_id = esp_mqtt_client_subscribe(client, "/topic/test2", 1);
+            //ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+            break;
+        case MQTT_EVENT_DISCONNECTED:
+            mqtt_is_connected = false;
+            break;
+
+        case MQTT_EVENT_SUBSCRIBED:
+            //ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
+            break;
+        case MQTT_EVENT_UNSUBSCRIBED:
+            //ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id);
+            break;
+        case MQTT_EVENT_PUBLISHED:
+            //ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
+            break;
+        case MQTT_EVENT_DATA:
+            //ESP_LOGI(TAG, "MQTT_EVENT_DATA");
+            //ESP_LOGI(TAG, "TOPIC=%.*s\r\n", event->topic_len, event->topic);
+            //ESP_LOGI(TAG, "DATA=%.*s\r\n", event->data_len, event->data);
+            break;
+        case MQTT_EVENT_ERROR:
+            //ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
+            break;
+        default:
+            //ESP_LOGI(TAG, "Other event id:%d", event->event_id);
+            break;
+    }
+}
+
+bool WifiTime::isMQTTConnected(void)
+{
+    return mqtt_is_connected;
+}
+
+void WifiTime::wakeUpLight(void)
+{
+    #ifdef _DEBUG
+    ESP_LOGI(TAG, "Sending MQTT topic to start wake up light automation");
+    #endif
+    //TODO Error handling missing
+    esp_mqtt_client_publish(mqtt_client, "wecker/wake_up", NULL, 0, 0, 0);
+}
+
+void WifiTime::stopWakeUpLight(void)
+{
+    #ifdef _DEBUG
+    ESP_LOGI(TAG, "Sending MQTT topic to stop wake up light automation");
+    #endif
+    //TODO Error handling missing
+    esp_mqtt_client_publish(mqtt_client, "wecker/alarm_off", NULL, 0, 0, 0);
 }

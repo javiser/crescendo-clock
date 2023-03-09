@@ -10,10 +10,24 @@
 #define LEDC_CHANNEL_RED                LEDC_CHANNEL_1  // Channel 0 reserved for display
 #define LEDC_CHANNEL_GREEN              LEDC_CHANNEL_2  // Channel 0 reserved for display
 
+#define DISPLAY_SYMBOL_WIFI_ON   ";"
+#define DISPLAY_SYMBOL_WIFI_OFF  "<"
+#define DISPLAY_SYMBOL_MQTT_ON   "="
+#define DISPLAY_SYMBOL_MQTT_OFF  ">"
+#define DISPLAY_SYMBOL_ALARM_ON  "?"
+#define DISPLAY_SYMBOL_ALARM_OFF "@"
+#define DISPLAY_SYMBOL_ALARM_L   "A"
+#define DISPLAY_SYMBOL_ALARM_R   "B"
+#define DISPLAY_SYMBOL_SNOOZE    "C"
+#define DISPLAY_SYMBOL_BED       "D"
+
 typedef enum {
     D_E_TIME = 0,
     D_E_ALARM_TIME,
+    D_E_ALARM_ACTIVE,
     D_E_SNOOZE_TIME,
+    D_E_WIFI_STATUS,
+    D_E_MQTT_STATUS,
 } display_element_t;
 
 typedef enum {

@@ -37,7 +37,7 @@ class ClockMachine {
     bool is_alarm_set = false;
     clock_time_t alarm_time;
     struct {
-        uint8_t crescendo_factor = 3;     // "crescendo_factor" seconds per volume step. If factor == 1 -> 30 seconds until maximum volume
+        uint8_t crescendo_factor = 6;     // "crescendo_factor" half-seconds per volume step. If factor == 2 -> 30 seconds until maximum volume
         uint16_t snooze_time_s = 300;     // Snooze time in seconds (must be a factor of 5!)
         bool sounds_on = false;
         uint8_t melody_nr = 1;
@@ -54,6 +54,8 @@ class ClockMachine {
     DFPlayer audio_player;
     int64_t active_timer_us;
     int64_t trigger_timestamp_us;
+    bool last_wifi_connected_status;
+    bool last_mqtt_connected_status;
 };
 
 #endif /* _INCLUDE_CLOCK_MACHINE_HPP_ */

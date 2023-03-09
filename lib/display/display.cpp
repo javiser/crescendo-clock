@@ -3,8 +3,8 @@
 #include "freertos/event_groups.h"
 #include "driver/ledc.h"
 #include <display.hpp>
-// TODO This is a temporary custom font
 #include <Antonio_SemiBold75pt7b.h>
+#include <Antonio_Regular26pt7b.h>
 
 #include "esp_log.h"
 static const char *TAG = "display";
@@ -41,7 +41,6 @@ void Display::init(void) {
 }
 
 void Display::updateContent(display_element_t element, void *value, display_action_t action) {
-    // TODO I need a display design to arrange everything properly
     switch (element) {
         case D_E_TIME:
             char time_buf[8];
@@ -55,17 +54,21 @@ void Display::updateContent(display_element_t element, void *value, display_acti
                 default:
                     break;
             }
-            lcd.drawString(time_buf, lcd.width() / 2, 10, &Antonio_SemiBold75pt7b);
+            lcd.drawString(time_buf, (lcd.width() / 2) + 5, 10, &Antonio_SemiBold75pt7b);
             break;
 
         case D_E_ALARM_TIME:
             char alarm_buf[8];
             sprintf(alarm_buf, "%02d:%02d", static_cast<clock_time_t *>(value)->hour, static_cast<clock_time_t *>(value)->minute);
+            char alarm_symbol_buf[2];
+            sprintf(alarm_symbol_buf, DISPLAY_SYMBOL_ALARM_ON);
             lcd.setTextColor(TFT_WHITE, TFT_BLACK);  // Normal case
 			lcd.setTextDatum(middle_center);
             switch (action) {
                 case D_A_OFF:
-                    lcd.setTextColor(TFT_BLACK, TFT_BLACK);
+                    lcd.setTextColor(TFT_DARKGRAY, TFT_BLACK);
+                    sprintf(alarm_symbol_buf, DISPLAY_SYMBOL_ALARM_OFF);
+                    sprintf(alarm_buf, "     ");
                     break;
                 case D_A_HIDE_HOURS:
                     alarm_buf[0] = alarm_buf[1] = ' ';
@@ -76,16 +79,35 @@ void Display::updateContent(display_element_t element, void *value, display_acti
                 default:
                     break;
             }
-            lcd.drawString(alarm_buf, 60, 205, &FreeMono18pt7b);
+            lcd.drawString(alarm_symbol_buf, 35, 205, &Antonio_Regular26pt7b);
+            lcd.drawString(alarm_buf, 100, 200, &Antonio_Regular26pt7b);
+            break;
+
+        case D_E_ALARM_ACTIVE:
+            char alarm_active_symbol_buf[2];
+            lcd.setTextColor(TFT_WHITE, TFT_BLACK);  // Normal case
+			lcd.setTextDatum(middle_center);
+            switch (action) {
+                case D_A_OFF:
+                    sprintf(alarm_active_symbol_buf, DISPLAY_SYMBOL_ALARM_L);
+                    break;
+                case D_A_ON:
+                    sprintf(alarm_active_symbol_buf, DISPLAY_SYMBOL_ALARM_R);
+                    break;
+                default:
+                    break;
+            }
+            lcd.drawString(alarm_active_symbol_buf, 35, 205, &Antonio_Regular26pt7b);
             break;
 
         case D_E_SNOOZE_TIME:
             char snooze_buf[8];
             lcd.setTextDatum(middle_center);
-            lcd.setTextColor(TFT_GREEN, TFT_BLACK);
+            lcd.setTextColor(TFT_ORANGE, TFT_BLACK);
             switch (action) {
                 case D_A_OFF:
                     sprintf(snooze_buf, "     ");
+                    lcd.drawString("  ", 175, 205, &Antonio_Regular26pt7b);
                     break;
                 case D_A_ON:
                     uint8_t minutes;
@@ -94,12 +116,45 @@ void Display::updateContent(display_element_t element, void *value, display_acti
                     remaining_seconds = *(static_cast<uint16_t *>(value));
                     minutes = remaining_seconds / 60;
                     seconds = remaining_seconds % 60;
-                    sprintf(snooze_buf, "%02d:%02d", minutes, seconds);
+                    sprintf(snooze_buf, "%01d:%02d", minutes, seconds);
+                    lcd.drawString(DISPLAY_SYMBOL_SNOOZE, 175, 205, &Antonio_Regular26pt7b);
                     break;
                 default:
                     break;
             }
-            lcd.drawString(snooze_buf, 60, 170, &FreeMono18pt7b);
+            lcd.drawString(snooze_buf, 230, 200, &Antonio_Regular26pt7b);
+            break;
+
+        case D_E_WIFI_STATUS:
+            lcd.setTextDatum(middle_center);
+            switch (action) {
+                case D_A_OFF:
+                    lcd.setTextColor(TFT_RED, TFT_BLACK);
+                    lcd.drawString(DISPLAY_SYMBOL_WIFI_OFF, 295, 170, &Antonio_Regular26pt7b);
+                    break;
+                case D_A_ON:
+                    lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+                    lcd.drawString(DISPLAY_SYMBOL_WIFI_ON, 295, 170, &Antonio_Regular26pt7b);
+                    break;
+                default:
+                    break;
+            }
+            break;
+
+        case D_E_MQTT_STATUS:
+            lcd.setTextDatum(middle_center);
+            switch (action) {
+                case D_A_OFF:
+                    lcd.setTextColor(TFT_RED, TFT_BLACK);
+                    lcd.drawString(DISPLAY_SYMBOL_MQTT_OFF, 295, 205, &Antonio_Regular26pt7b);
+                    break;
+                case D_A_ON:
+                    lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+                    lcd.drawString(DISPLAY_SYMBOL_MQTT_ON, 295, 205, &Antonio_Regular26pt7b);
+                    break;
+                default:
+                    break;
+            }
             break;
 
         default:
