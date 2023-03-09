@@ -41,9 +41,6 @@ void TimeState::buttonShortPressed(ClockMachine* clock) {
     }
     clock->getDisplay()->setIncreasedBrightness(true);
     clock->triggerTimer(3000);
-
-    // TODO Just for debugging, to stop the silly animation
-    //clock->getDisplay()->updateContent(D_E_TEST, NULL, D_A_OFF);
 }
 
 void TimeState::buttonLongPressed(ClockMachine* clock) {
@@ -53,12 +50,6 @@ void TimeState::buttonLongPressed(ClockMachine* clock) {
 void TimeState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t position, rotary_encoder_dir_t direction) {
     clock->getDisplay()->setIncreasedBrightness(true);
     clock->triggerTimer(3000);
-
-    // TODO Just for debugging, to start a silly animation
-    // if (direction == DIR_RIGHT)
-    //     clock->getDisplay()->updateContent(D_E_TEST, NULL, D_A_RIGHT);
-    // else
-    //     clock->getDisplay()->updateContent(D_E_TEST, NULL, D_A_LEFT);
 }
 
 void TimeState::exit(ClockMachine* clock) {
@@ -77,7 +68,7 @@ ClockState& AlarmState::getInstance() {
 }
 
 void AlarmState::enter(ClockMachine* clock) {
-    // TODO We need to update the display, but for now I just ignore this
+    // TODO We need to update the display with some alarm information, but for now I just ignore this
     clock->getDisplay()->setMaxBrightness(true);
     alarm_volume = 5;
     clock->getPlayer()->loopTrack(clock->settings.melody_nr);

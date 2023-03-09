@@ -18,23 +18,10 @@ void Display::monitorBrightnessTask(void *pvParameter) {
     }
 }
 
-void Display::animationTask(void *pvParameter) {
-    Display *pThis = (Display *)pvParameter;
-    while (1) {
-        pThis->animateStuff();
-        vTaskDelay(20 / portTICK_PERIOD_MS);
-    }
-}
-
 void Display::init(void) {
     lcd.init();
     lcd.setRotation(0);
     lcd.setColorDepth(16);
-
-    // TODO For now we take the below quarter of the screen for additional info
-    low_bg_sp.createSprite(320, 80);
-    alarm_time_sp.createSprite(120, 40);
-    alarm_time_sp.setTextDatum(middle_center);
 
     // ADC1 config for light sensor
     adc_oneshot_unit_init_cfg_t init_config1 = {
@@ -51,16 +38,6 @@ void Display::init(void) {
     // TODO When I didn't have debug information in controlBrightness I could set the stack to 768 (but not 512)
     xTaskCreate(this->monitorBrightnessTask, "monitor_brightness_task", 2048, this, 1, NULL);
     queue = xQueueCreate(1, sizeof(bool));
-
-    // TODO This 2048 is just a first guess
-    xTaskCreate(this->animationTask, "animation_task", 2048, this, 1, NULL);
-}
-
-void Display::drawLowerSection() {
-    low_bg_sp.clear();
-    alarm_time_sp.pushSprite(&low_bg_sp, bg_sprite_x, 40);
-    low_bg_sp.pushSprite(&lcd, 0, 160);
-    lcd.display();
 }
 
 void Display::updateContent(display_element_t element, void *value, display_action_t action) {
@@ -84,10 +61,11 @@ void Display::updateContent(display_element_t element, void *value, display_acti
         case D_E_ALARM_TIME:
             char alarm_buf[8];
             sprintf(alarm_buf, "%02d:%02d", static_cast<clock_time_t *>(value)->hour, static_cast<clock_time_t *>(value)->minute);
-            alarm_time_sp.setTextColor(TFT_WHITE, TFT_BLACK);  // Normal case
+            lcd.setTextColor(TFT_WHITE, TFT_BLACK);  // Normal case
+			lcd.setTextDatum(middle_center);
             switch (action) {
                 case D_A_OFF:
-                    alarm_time_sp.setTextColor(TFT_BLACK, TFT_BLACK);
+                    lcd.setTextColor(TFT_BLACK, TFT_BLACK);
                     break;
                 case D_A_HIDE_HOURS:
                     alarm_buf[0] = alarm_buf[1] = ' ';
@@ -98,19 +76,18 @@ void Display::updateContent(display_element_t element, void *value, display_acti
                 default:
                     break;
             }
-            alarm_time_sp.drawString(alarm_buf, 60, 20, &FreeMono18pt7b);
-            drawLowerSection();
+            lcd.drawString(alarm_buf, 60, 205, &FreeMono18pt7b);
             break;
 
-        // TODO for now no sprite or similar stuff, just quick hack on lcd and with dirty cleaning
         case D_E_SNOOZE_TIME:
+            char snooze_buf[8];
             lcd.setTextDatum(middle_center);
+            lcd.setTextColor(TFT_GREEN, TFT_BLACK);
             switch (action) {
                 case D_A_OFF:
-                    lcd.fillRect(0, 160, 120, 40, TFT_BLACK);
+                    sprintf(snooze_buf, "     ");
                     break;
                 case D_A_ON:
-                    char snooze_buf[8];
                     uint8_t minutes;
                     uint8_t seconds;
                     uint16_t remaining_seconds;
@@ -118,50 +95,16 @@ void Display::updateContent(display_element_t element, void *value, display_acti
                     minutes = remaining_seconds / 60;
                     seconds = remaining_seconds % 60;
                     sprintf(snooze_buf, "%02d:%02d", minutes, seconds);
-                    lcd.setTextColor(TFT_GREEN, TFT_BLACK);
-                    lcd.drawString(snooze_buf, 60, 180, &FreeMono18pt7b);
                     break;
                 default:
                     break;
             }
-            break;
-
-        // For now just a very very basic test
-        case D_E_TEST:
-            if (action == D_A_RIGHT)
-                animate_action = D_ANI_RIGHT;
-            else if (action == D_A_LEFT)
-                animate_action = D_ANI_LEFT;
-            else if (action == D_A_OFF)
-                animate_action = D_ANI_STOP;
+            lcd.drawString(snooze_buf, 60, 170, &FreeMono18pt7b);
             break;
 
         default:
             break;
     }
-}
-
-void Display::animateStuff(void) {
-    if (animate_action == D_ANI_IDLE)
-        return;
-
-    // TODO For now some silly animation and the background does not get properly cleaned :(
-    if (animate_action == D_ANI_RIGHT) {
-        // TODO This is a test anyway but bg_sprite_x is indeed a bad name
-        bg_sprite_x += 5;
-        if (bg_sprite_x > 320)
-            bg_sprite_x -= 320;
-    }
-    else if (animate_action == D_ANI_LEFT) {
-        bg_sprite_x -= 5;
-        if (bg_sprite_x < -320)
-            bg_sprite_x += 320;
-    } else if (animate_action == D_ANI_STOP) {
-        bg_sprite_x = 0;
-        animate_action = D_ANI_IDLE;
-    }
-    // For now we just draw the lower section, we have only such animations
-    drawLowerSection();
 }
 
 void Display::controlBrightness(void) {
@@ -215,12 +158,13 @@ void Display::setBrightness(uint8_t brightness_level) {
 void Display::setMaxBrightness(bool request_max_brightness) {
     max_brightness_requested = request_max_brightness;
     increased_brightness_requested = false;
+    // This is to trigger an immediate change of brightness in monitorBrightnessTask
     bool queue_event = true;
     xQueueSend(queue, &queue_event, portMAX_DELAY);
 }
 
 void Display::setIncreasedBrightness(bool request_inc_brightness) {
-    // This check is necessary in case we call this function very often
+     // This is to trigger an immediate change of brightness in monitorBrightnessTask
     if (increased_brightness_requested != request_inc_brightness) {
         bool queue_event = true;
         xQueueSend(queue, &queue_event, portMAX_DELAY);
