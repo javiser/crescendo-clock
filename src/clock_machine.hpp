@@ -21,7 +21,8 @@ class ClockMachine {
     void saveAlarmTimeInNVS();
     void saveSettingsInNVS();
     void setState(ClockState& newState);
-    void checkTimeUpdate(void);
+    bool checkTimeUpdate(void);
+    clock_time_t getTimeToAlarm(clock_time_t current_time, clock_time_t alarm_time);
     WifiTime* getWifiTime();
     Display* getDisplay();
     RotaryEncoder* getEncoder();

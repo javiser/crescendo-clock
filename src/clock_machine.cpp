@@ -89,7 +89,7 @@ void ClockMachine::setState(ClockState& newState) {
     state->enter(this);  // do stuff after we change state
 }
 
-void ClockMachine::checkTimeUpdate(void) {
+bool ClockMachine::checkTimeUpdate(void) {
     clock_time_t current_time;
     wifi_time.getTime(&current_time);
 
@@ -98,7 +98,26 @@ void ClockMachine::checkTimeUpdate(void) {
         stored_time.hour = current_time.hour;
         stored_time.minute = current_time.minute;
         display.updateContent(D_E_TIME, &stored_time, D_A_ON);
+        return true;
     }
+
+    return false;
+}
+
+clock_time_t ClockMachine::getTimeToAlarm(clock_time_t current_time, clock_time_t alarm_time) {
+    clock_time_t time_to_alarm;
+
+    if (current_time.minute > alarm_time.minute) {
+        alarm_time.minute += 60;
+        current_time.hour++;
+    }
+    if (current_time.hour > alarm_time.hour)
+        alarm_time.hour += 24;
+
+    time_to_alarm.hour = alarm_time.hour - current_time.hour;
+    time_to_alarm.minute = alarm_time.minute - current_time.minute;
+
+    return time_to_alarm;
 }
 
 WifiTime* ClockMachine::getWifiTime() {

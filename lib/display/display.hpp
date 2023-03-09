@@ -25,6 +25,7 @@ typedef enum {
     D_E_TIME = 0,
     D_E_ALARM_TIME,
     D_E_ALARM_ACTIVE,
+    D_E_BED_TIME,
     D_E_SNOOZE_TIME,
     D_E_SNOOZE_CANCEL,
     D_E_WIFI_STATUS,

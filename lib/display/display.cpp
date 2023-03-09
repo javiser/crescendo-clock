@@ -100,6 +100,29 @@ void Display::updateContent(display_element_t element, void *value, display_acti
             lcd.drawString(alarm_active_symbol_buf, 35, 205, &Antonio_Regular26pt7b);
             break;
 
+        case D_E_BED_TIME:
+            char bed_time_buf[8];
+            sprintf(bed_time_buf, "%01d:%02d", static_cast<clock_time_t *>(value)->hour, static_cast<clock_time_t *>(value)->minute);
+            char bed_time_symbol_buf[3];
+            sprintf(bed_time_symbol_buf, DISPLAY_SYMBOL_BED);
+            lcd.setTextColor(TFT_LIGHTGRAY, TFT_BLACK);  // Normal case
+			lcd.setTextDatum(middle_center);
+            // We show the remaining bed time only when less than 9 hours
+            if (static_cast<clock_time_t *>(value)->hour >= 9)
+                action = D_A_OFF;
+
+            switch (action) {
+                case D_A_OFF:
+                    sprintf(bed_time_buf, "    ");
+                    sprintf(bed_time_symbol_buf, "  ");
+                    break;
+                default:
+                    break;
+            }
+            lcd.drawString(bed_time_symbol_buf, 180, 205, &Antonio_Regular26pt7b);
+            lcd.drawString(bed_time_buf, 235, 200, &Antonio_Regular26pt7b);
+            break;
+
         case D_E_SNOOZE_TIME:
             char snooze_buf[8];
             lcd.setTextDatum(middle_center);

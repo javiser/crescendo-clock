@@ -16,15 +16,21 @@ void TimeState::enter(ClockMachine* clock) {
 }
 
 void TimeState::run(ClockMachine* clock) {
-    clock->checkTimeUpdate();
+    bool time_has_changed = clock->checkTimeUpdate();
 
     if (clock->is_alarm_set &&
         (clock->stored_time.hour == clock->alarm_time.hour) &&
         (clock->stored_time.minute == clock->alarm_time.minute)) {
+        clock_time_t bed_time = clock->getTimeToAlarm(clock->stored_time, clock->alarm_time);
+        clock->getDisplay()->updateContent(D_E_BED_TIME, &bed_time, D_A_OFF);
         clock->setState(AlarmState::getInstance());
     }
-
-    // TODO Implement the "remaining time until alarm" feature (it helps me see how much sleep I will get)
+    else if (clock->is_alarm_set && time_has_changed)
+    {
+        clock_time_t bed_time = clock->getTimeToAlarm(clock->stored_time, clock->alarm_time);
+        clock->getDisplay()->updateContent(D_E_BED_TIME, &bed_time, D_A_ON);
+    }
+    
 }
 
 void TimeState::timerExpired(ClockMachine* clock) {
@@ -37,6 +43,8 @@ void TimeState::buttonShortPressed(ClockMachine* clock) {
         clock->is_alarm_set = !clock->is_alarm_set;
         display_action_t action = clock->is_alarm_set ? D_A_ON : D_A_OFF;        
         clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, action);
+        clock_time_t bed_time = clock->getTimeToAlarm(clock->stored_time, clock->alarm_time);
+        clock->getDisplay()->updateContent(D_E_BED_TIME, &bed_time, action);
     }
     clock->getDisplay()->setIncreasedBrightness(true);
     clock->triggerTimer(3000);
@@ -271,6 +279,8 @@ void SetAlarmState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t pos
         minutes_hidden = false;
     }
     clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, D_A_ON);
+    clock_time_t bed_time = clock->getTimeToAlarm(clock->stored_time, clock->alarm_time);
+    clock->getDisplay()->updateContent(D_E_BED_TIME, &bed_time, D_A_ON);
 
     clock->triggerTimer(500);
 }
