@@ -150,7 +150,7 @@ void ClockMachine::checkWifiStatus(bool force_update) {
     if ((last_wifi_connected_status != wifi_connected_status) || force_update) {
         last_wifi_connected_status = wifi_connected_status;
         display_action_t wifi_action = wifi_connected_status ? D_A_ON : D_A_OFF;
-        display.updateContent(D_E_WIFI_STATUS, NULL, wifi_action);
+        display.updateContent(D_E_WIFI_STATUS, wifi_action);
     }
 }
 
@@ -168,7 +168,7 @@ void ClockMachine::run() {
     {
         last_mqtt_connected_status = mqtt_connected_status;
         display_action_t mqtt_action = mqtt_connected_status ? D_A_ON : D_A_OFF; 
-        display.updateContent(D_E_MQTT_STATUS, NULL, mqtt_action);
+        display.updateContent(D_E_MQTT_STATUS, mqtt_action);
     }
 
     // Keep track of audio player status, if not online then show this as error
@@ -177,7 +177,7 @@ void ClockMachine::run() {
     {
         last_audio_online_status = audio_online_status;
         display_action_t audio_action = audio_online_status ? D_A_ON : D_A_OFF; 
-        display.updateContent(D_E_AUDIO, NULL, audio_action);
+        display.updateContent(D_E_AUDIO, audio_action);
     }
 }
 

@@ -41,7 +41,6 @@ void Display::init(void) {
     queue = xQueueCreate(1, sizeof(bool));
 }
 
-// TODO Overload this function for the case we don't need to pass any parameter for the value
 void Display::updateContent(display_element_t element, void *value, display_action_t action) {
     switch (element) {
         case D_E_TIME:
@@ -83,23 +82,6 @@ void Display::updateContent(display_element_t element, void *value, display_acti
             }
             lcd.drawString(alarm_symbol_buf, 35, 205, &Antonio_Regular26pt7b);
             lcd.drawString(alarm_buf, 100, 200, &Antonio_Regular26pt7b);
-            break;
-
-        case D_E_ALARM_ACTIVE:
-            char alarm_active_symbol_buf[2];
-            lcd.setTextColor(TFT_WHITE, TFT_BLACK);  // Normal case
-			lcd.setTextDatum(middle_center);
-            switch (action) {
-                case D_A_OFF:
-                    sprintf(alarm_active_symbol_buf, DISPLAY_SYMBOL_ALARM_L);
-                    break;
-                case D_A_ON:
-                    sprintf(alarm_active_symbol_buf, DISPLAY_SYMBOL_ALARM_R);
-                    break;
-                default:
-                    break;
-            }
-            lcd.drawString(alarm_active_symbol_buf, 35, 205, &Antonio_Regular26pt7b);
             break;
 
         case D_E_BED_TIME:
@@ -148,6 +130,30 @@ void Display::updateContent(display_element_t element, void *value, display_acti
                     break;
             }
             lcd.drawString(snooze_buf, 230, 200, &Antonio_Regular26pt7b);
+            break;
+
+        default:
+            break;
+    }
+}
+
+void Display::updateContent(display_element_t element, display_action_t action) {
+    switch (element) {
+        case D_E_ALARM_ACTIVE:
+            char alarm_active_symbol_buf[2];
+            lcd.setTextColor(TFT_WHITE, TFT_BLACK);  // Normal case
+            lcd.setTextDatum(middle_center);
+            switch (action) {
+                case D_A_OFF:
+                    sprintf(alarm_active_symbol_buf, DISPLAY_SYMBOL_ALARM_L);
+                    break;
+                case D_A_ON:
+                    sprintf(alarm_active_symbol_buf, DISPLAY_SYMBOL_ALARM_R);
+                    break;
+                default:
+                    break;
+            }
+            lcd.drawString(alarm_active_symbol_buf, 35, 205, &Antonio_Regular26pt7b);
             break;
 
         case D_E_SNOOZE_CANCEL:

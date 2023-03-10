@@ -66,6 +66,7 @@ class Display {
    public:
     void init(void);
     void updateContent(display_element_t element, void *value, display_action_t action);
+    void updateContent(display_element_t element, display_action_t action);
     void setMaxBrightness(bool request_max_brightness);
     void setIncreasedBrightness(bool request_inc_brightness);
     bool isDisplayOn(void);

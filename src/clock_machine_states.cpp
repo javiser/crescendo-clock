@@ -81,7 +81,7 @@ ClockState& WPSState::getInstance() {
 void WPSState::enter(ClockMachine* clock) {
     clock->getDisplay()->updateContent(D_E_BED_TIME, &(clock->alarm_time), D_A_OFF); // alarm time as dummy value
     blink = true;
-    clock->getDisplay()->updateContent(D_E_WIFI_SETTING, NULL, D_A_ON);
+    clock->getDisplay()->updateContent(D_E_WIFI_SETTING, D_A_ON);
     clock->getDisplay()->setIncreasedBrightness(true);
     clock->getWifiTime()->startWPS();
     clock->triggerTimer(500);
@@ -101,7 +101,7 @@ void WPSState::run(ClockMachine* clock) {
 void WPSState::timerExpired(ClockMachine* clock) {
     blink = !blink;
     display_action_t action = blink ? D_A_ON : D_A_OFF;
-    clock->getDisplay()->updateContent(D_E_WIFI_SETTING, NULL, action);
+    clock->getDisplay()->updateContent(D_E_WIFI_SETTING, action);
     clock->triggerTimer(500);
 }
 
@@ -117,7 +117,7 @@ void WPSState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t position
 }
 
 void WPSState::exit(ClockMachine* clock) {
-    clock->getDisplay()->updateContent(D_E_WIFI_SETTING, NULL, D_A_OFF);
+    clock->getDisplay()->updateContent(D_E_WIFI_SETTING, D_A_OFF);
     display_action_t action = clock->is_alarm_set ? D_A_ON : D_A_OFF;  
     clock_time_t bed_time = clock->getTimeToAlarm(clock->stored_time, clock->alarm_time);
     clock->getDisplay()->updateContent(D_E_BED_TIME, &bed_time, action);
@@ -163,7 +163,7 @@ void AlarmState::timerExpired(ClockMachine* clock) {
     display_action_t action;
     action = alarm_symbol_direction ? D_A_OFF : D_A_ON;
     alarm_symbol_direction = !alarm_symbol_direction;
-    clock->getDisplay()->updateContent(D_E_ALARM_ACTIVE, NULL, action);
+    clock->getDisplay()->updateContent(D_E_ALARM_ACTIVE, action);
 }
 
 void AlarmState::buttonShortPressed(ClockMachine* clock) {
@@ -223,7 +223,7 @@ void SnoozeState::run(ClockMachine* clock) {
 void SnoozeState::timerExpired(ClockMachine* clock) {
     clock->getDisplay()->setIncreasedBrightness(false);
     snooze_leaving_step = SNOOZE_WAITING;
-    clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, NULL, D_A_OFF);
+    clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, D_A_OFF);
     // Back to the start position for the snooze cancel sequence
 }
 
@@ -235,7 +235,7 @@ void SnoozeState::buttonShortPressed(ClockMachine* clock) {
 void SnoozeState::buttonLongPressed(ClockMachine* clock) {
     if (snooze_leaving_step == SNOOZE_FIRST_ROTATION) {
         snooze_leaving_step = SNOOZE_LONG_PRESS;
-        clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, NULL, D_A_TWO_BARS);
+        clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, D_A_TWO_BARS);
         //Yes! Now a rotation in the other direction!!!
     }
     // No matter in what state are we, 3 seconds more light.
@@ -247,11 +247,11 @@ void SnoozeState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t posit
     if (snooze_leaving_step == SNOOZE_WAITING) {
         snooze_leaving_step = SNOOZE_FIRST_ROTATION;
         first_rotation_dir = direction;
-        clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, NULL, D_A_ONE_BAR);
+        clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, D_A_ONE_BAR);
         // Now a long press...
     } else if (snooze_leaving_step == SNOOZE_LONG_PRESS and direction != first_rotation_dir) {
         // Yes! Snooze cancellation sequence complete!
-        clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, NULL, D_A_OFF);
+        clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, D_A_OFF);
         clock->is_alarm_set = false;
         clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, D_A_OFF);
         clock->getWifiTime()->sendMQTTAlarmStopped();
