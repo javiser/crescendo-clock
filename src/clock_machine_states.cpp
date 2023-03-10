@@ -88,7 +88,6 @@ void AlarmState::run(ClockMachine* clock) {
 }
 
 void AlarmState::timerExpired(ClockMachine* clock) {
-    crescendo_counter++;
     if (crescendo_counter == clock->settings.crescendo_factor) {
         crescendo_counter = 0;
         if (alarm_volume < 30) {
@@ -96,6 +95,7 @@ void AlarmState::timerExpired(ClockMachine* clock) {
             clock->getPlayer()->setVolume(alarm_volume);
         }
     }
+    crescendo_counter++;
     clock->triggerTimer(500);
 
     display_action_t action;
