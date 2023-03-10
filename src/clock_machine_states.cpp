@@ -76,8 +76,8 @@ ClockState& AlarmState::getInstance() {
 
 void AlarmState::enter(ClockMachine* clock) {
     clock->getDisplay()->setMaxBrightness(true);
-    alarm_volume = 5;
-    crescendo_counter = 0;
+    alarm_volume = 4;
+    crescendo_counter = clock->settings.crescendo_factor;   // To force setting the volume in the next trigger
     clock->getPlayer()->loopTrack(clock->settings.melody_nr);
     clock->triggerTimer(10);  // Short trigger to avoid copying code that will be in the timerExpired method
     clock->getWifiTime()->wakeUpLight();
