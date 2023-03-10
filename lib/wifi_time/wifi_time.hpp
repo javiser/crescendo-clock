@@ -38,8 +38,8 @@ class WifiTime {
     void setTime(struct tm *timeinfo);
     void getTime(clock_time_t *time);
     bool isMQTTConnected(void);
-    void wakeUpLight(void);
-    void stopWakeUpLight(void);
+    void sendMQTTAlarmTriggered(void);
+    void sendMQTTAlarmStopped(void);
 };
 
 #endif // _INCLUDE_WIFI_TIME_HPP_
