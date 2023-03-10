@@ -57,6 +57,7 @@ class ClockMachine {
     int64_t trigger_timestamp_us;
     bool last_wifi_connected_status;
     bool last_mqtt_connected_status;
+    bool last_audio_online_status;
 };
 
 #endif /* _INCLUDE_CLOCK_MACHINE_HPP_ */

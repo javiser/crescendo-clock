@@ -13,8 +13,7 @@ ClockMachine::ClockMachine(RotaryEncoder* encoder_ref) {
 
     if (!audio_player.init(MP3_PLAYER_UART_PORT_NUM, MP3_PLAYER_TX, MP3_PLAYER_RX)) {
         ;
-        // TODO I need to handle this
-        // ESP_LOGE(TAG, "There was some error initializing the MP3 player");
+        ESP_LOGE(TAG, "There was an error initializing the MP3 player");
     }
 
     encoder = encoder_ref;
@@ -33,6 +32,7 @@ ClockMachine::ClockMachine(RotaryEncoder* encoder_ref) {
     // We initialize with the opposite values to force a display update in the next run
     last_wifi_connected_status = !wifi_time.isWifiConnected();
     last_mqtt_connected_status = !wifi_time.isMQTTConnected();
+    last_audio_online_status = !audio_player.isDeviceOnline();
 
     state = static_cast<ClockState*>(new TimeState());
     state->enter(this);
@@ -162,6 +162,15 @@ void ClockMachine::run() {
         last_mqtt_connected_status = mqtt_connected_status;
         display_action_t mqtt_action = mqtt_connected_status ? D_A_ON : D_A_OFF; 
         display.updateContent(D_E_MQTT_STATUS, NULL, mqtt_action);
+    }
+
+    // Keep track of audio player status, if not online then show this as error
+    bool audio_online_status = audio_player.isDeviceOnline();
+    if (last_audio_online_status != audio_online_status)
+    {
+        last_audio_online_status = audio_online_status;
+        display_action_t audio_action = audio_online_status ? D_A_ON : D_A_OFF; 
+        display.updateContent(D_E_AUDIO, NULL, audio_action);
     }
 }
 

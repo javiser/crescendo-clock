@@ -1,10 +1,7 @@
 #include "DF_player.hpp"
 #include "freertos/task.h"
-
-#ifdef _DEBUG
 #include "esp_log.h"
-static const char *TAG = "player_lib";
-#endif
+static const char *TAG = "df_player";
 
 #define BUF_SIZE (2048)
 
@@ -15,7 +12,8 @@ void DFPlayer::monitorSerialTask(void *pvParameter) {
     }
 }
 
-// TODO there is a lot of blocking going on. For begin() it's fine but for the send commands? Not so much
+// There is a lot of blocking going on. For begin() it's fine but for the send commands? Not so much.
+// However for our purposes this will just do
 bool DFPlayer::init(uart_port_t uart_port_number, int pin_tx, int pin_rx) {
     uart_config_t uart_config = {
         .baud_rate = 9600,
@@ -55,17 +53,12 @@ void DFPlayer::receiveData(uint16_t timeout_ms) {
     uint8_t rcvd_buffer[RECEIVE_LENGTH];
     number_of_bytes = uart_read_bytes(_uart_port_nr, rcvd_buffer, RECEIVE_LENGTH, ticks_to_wait);
     if (number_of_bytes == -1) {
-        ;  // TODO when we get to this point everything goes crazy, we need to catch this somehow
-        #ifdef _DEBUG
+        ;  // If we come to this point, everything goes crazy. This made problems in the past
         ESP_LOGE(TAG, "Error receiving bytes");
-        #endif
     } else if (number_of_bytes > 0) {
         if (number_of_bytes < RECEIVE_LENGTH) {
             // For some reason, we get a single byte after reset which needs to be ignored
             ;
-            #ifdef _DEBUG
-            ESP_LOGI(TAG, "Received only %d bytes, ignoring", number_of_bytes);
-            #endif
         } else {
             // Now check the bytes
             if ((rcvd_buffer[POS_START] != DATA_START) || (rcvd_buffer[POS_VERSION] != DATA_VERSION) ||
@@ -80,11 +73,9 @@ void DFPlayer::receiveData(uint16_t timeout_ms) {
             }
         }
     } 
-    #ifdef _DEBUG
     else {
         ESP_LOGE(TAG, "Expecting to get some bytes, but nothing there");
     }
-    #endif
 }
 
 void DFPlayer::sendData(uint8_t command, uint16_t parameter) {
@@ -161,7 +152,6 @@ void DFPlayer::setEvent(dfplayer_event_t event, uint16_t response) {
     _last_event = event;
     _received_response = response;
 
-    #ifdef _DEBUG
     if (event == DFPLAYER_PLAYER_ERROR)
         ESP_LOGE(TAG, "Player error! Error type = %d", response);
     else {
@@ -189,7 +179,6 @@ void DFPlayer::setEvent(dfplayer_event_t event, uint16_t response) {
                 break;
         }
     }
-    #endif
 }
 
 dfplayer_event_t DFPlayer::readLastEvent() {

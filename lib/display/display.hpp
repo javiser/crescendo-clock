@@ -20,6 +20,7 @@
 #define DISPLAY_SYMBOL_ALARM_R   "B"
 #define DISPLAY_SYMBOL_SNOOZE    "C"
 #define DISPLAY_SYMBOL_BED       "D"
+#define DISPLAY_SYMBOL_AUDIO_OFF "E"
 
 typedef enum {
     D_E_TIME = 0,
@@ -30,6 +31,7 @@ typedef enum {
     D_E_SNOOZE_CANCEL,
     D_E_WIFI_STATUS,
     D_E_MQTT_STATUS,
+    D_E_AUDIO,
 } display_element_t;
 
 typedef enum {

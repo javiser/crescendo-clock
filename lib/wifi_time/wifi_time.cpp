@@ -1,7 +1,7 @@
 #include <string.h>
 #include "esp_log.h"
 #include <wifi_time.hpp>
-// TODO it should be possible to add this without relative paths
+// TODO it should be possible to add this without relative paths. Maybe we should get rid of the "lib" concept?
 #include "../../src/credentials.hpp"
 
 static const char *TAG = "wifi_time";
@@ -50,12 +50,12 @@ void WifiTime::monitorWifi(void) {
 
     // xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually happened.
     if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(TAG, "Connected to: %s", ESP_WIFI_SSID);
+        ESP_LOGI(TAG, "Connected to AP: %s", ESP_WIFI_SSID);
         wifi_is_connected = true;
         mqttAppStart();
     } 
     else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGE(TAG, "Failed to connect to: %s", ESP_WIFI_SSID);
+        ESP_LOGE(TAG, "Failed to connect to AP: %s", ESP_WIFI_SSID);
     } else {
         ESP_LOGE(TAG, "Unexpected event");
     }

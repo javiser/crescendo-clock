@@ -203,6 +203,19 @@ void Display::updateContent(display_element_t element, void *value, display_acti
             }
             break;
 
+        case D_E_AUDIO:
+            lcd.setTextDatum(middle_center);
+            lcd.setTextColor(TFT_RED, TFT_BLACK);
+            switch (action) {
+                case D_A_OFF:
+                    lcd.drawString(DISPLAY_SYMBOL_AUDIO_OFF, 35, 170, &Antonio_Regular26pt7b);
+                    break;
+                default:
+                    lcd.drawString("  ", 35, 170, &Antonio_Regular26pt7b);
+                    break;
+            }
+            break;
+
         default:
             break;
     }
