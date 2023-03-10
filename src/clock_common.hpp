@@ -28,4 +28,9 @@ typedef struct {
     uint8_t minute;
 } clock_time_t;
 
+typedef struct {
+    uint8_t ssid[32];
+    uint8_t password[64];
+} wifi_credentials_t;
+
 #endif // _INCLUDE_CLOCK_COMMON_HPP_

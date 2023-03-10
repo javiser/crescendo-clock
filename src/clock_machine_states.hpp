@@ -36,6 +36,22 @@ class TimeState : public ClockState {
     virtual ~TimeState();
 };
 
+class WPSState : public ClockState {
+   public:
+    virtual void enter(ClockMachine* clock);
+    virtual void run(ClockMachine* clock);
+    virtual void timerExpired(ClockMachine* clock);
+    virtual void buttonShortPressed(ClockMachine* clock);
+    virtual void buttonLongPressed(ClockMachine* clock);
+    virtual void encoderRotated(ClockMachine* clock, rotary_encoder_pos_t position, rotary_encoder_dir_t direction = DIR_RIGHT);
+    virtual void exit(ClockMachine* clock);
+    static ClockState& getInstance();
+    virtual ~WPSState();
+
+   private:
+    bool blink;
+};
+
 class AlarmState : public ClockState {
    public:
     virtual void enter(ClockMachine* clock);

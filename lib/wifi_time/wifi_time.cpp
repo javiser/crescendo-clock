@@ -1,4 +1,3 @@
-#include <string.h>
 #include "esp_log.h"
 #include <wifi_time.hpp>
 // TODO it should be possible to add this without relative paths. Maybe we should get rid of the "lib" concept?
@@ -11,19 +10,35 @@ static bool mqtt_is_connected = false;
 
 void WifiTime::wifiEventHandler(void *pvParameter, esp_event_base_t event_base, int32_t event_id, void *event_data) {
     WifiTime *pThis = (WifiTime *)pvParameter;
-
-    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
-        esp_wifi_connect();
-    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        pThis->wifi_is_connected = false;
-        if (pThis->retry_num < WIFI_NR_RETRIES) {
-            esp_wifi_connect();
-            pThis->retry_num++;
-            ESP_LOGI(TAG, "retry number %d for connection to WiFi", pThis->retry_num);
-        } else {
-            pThis->retry_num = 0;
-            xEventGroupSetBits(pThis->wifi_event_group, WIFI_FAIL_BIT);
+    if (event_base == WIFI_EVENT) {
+        switch (event_id) {
+            case WIFI_EVENT_STA_START:
+                esp_wifi_connect();
+                break;
+            case WIFI_EVENT_STA_DISCONNECTED:
+                pThis->wifi_is_connected = false;
+                if (pThis->retry_num < WIFI_NR_RETRIES) {
+                    esp_wifi_connect();
+                    pThis->retry_num++;
+                    ESP_LOGI(TAG, "retry number %d for connection to WiFi", pThis->retry_num);
+                } else {
+                    pThis->retry_num = 0;
+                    xEventGroupSetBits(pThis->wifi_event_group, WIFI_FAIL_BIT);
+                }
+                break;
+            case WIFI_EVENT_STA_WPS_ER_SUCCESS:
+                // Copy obtained credentials to have them saved in NVS later
+                wifi_config_t wifi_config;
+                esp_wifi_get_config(WIFI_IF_STA, &wifi_config);
+                strcpy((char*)pThis->wifi_credentials->ssid, (char*)wifi_config.sta.ssid);
+                strcpy((char*)pThis->wifi_credentials->password, (char*)wifi_config.sta.password);
+                pThis->stopWPS();
+                break;
+            default:
+                pThis->stopWPS();
+                break;
         }
+
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         pThis->retry_num = 0;
         xEventGroupSetBits(pThis->wifi_event_group, WIFI_CONNECTED_BIT);
@@ -50,12 +65,12 @@ void WifiTime::monitorWifi(void) {
 
     // xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually happened.
     if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(TAG, "Connected to WiFi: %s", ESP_WIFI_SSID);
+        ESP_LOGI(TAG, "Connected to WiFi: %s", wifi_credentials->ssid);
         wifi_is_connected = true;
         mqttAppStart();
     } 
     else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGE(TAG, "Failed to connect to WiFi: %s", ESP_WIFI_SSID);
+        ESP_LOGE(TAG, "Failed to connect to WiFi: %s", wifi_credentials->ssid);
     } else {
         ESP_LOGE(TAG, "Unexpected event");
     }
@@ -69,7 +84,8 @@ void WifiTime::monitorWifi(void) {
         // No timesync now, we want to keep trying. Wait 15 seconds only
         vTaskDelay(WIFI_RECHECK_PERIOD_NO_TIME_SYNC / portTICK_PERIOD_MS);
 
-    ESP_ERROR_CHECK(esp_wifi_connect());
+    if (!wps_is_active) // Otherwise the WPS process will be interrupted
+        esp_wifi_connect();
 }
 
 void WifiTime::initSTA(void) {
@@ -87,8 +103,8 @@ void WifiTime::initSTA(void) {
     ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, this->wifiEventHandler, this, &instance_got_ip));
 
     wifi_config_t wifi_config = {};
-    strcpy((char*)wifi_config.sta.ssid, ESP_WIFI_SSID);
-    strcpy((char*)wifi_config.sta.password, ESP_WIFI_PASS);
+    strcpy((char*)wifi_config.sta.ssid, (char*)wifi_credentials->ssid);
+    strcpy((char*)wifi_config.sta.password, (char*)wifi_credentials->password);
     wifi_config.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
     wifi_config.sta.pmf_cfg.capable = true;
     wifi_config.sta.pmf_cfg.required = false;
@@ -102,6 +118,24 @@ void WifiTime::initSTA(void) {
     xTaskCreate(this->monitorWifiTask, "monitor_wifi_task", 4096, this, 10, NULL);
 }
 
+void WifiTime::startWPS(void) {
+    esp_wifi_disconnect();
+    static esp_wps_config_t wps_config = WPS_CONFIG_INIT_DEFAULT(WPS_TYPE_PBC);
+    ESP_ERROR_CHECK(esp_wifi_wps_enable(&wps_config));
+    ESP_ERROR_CHECK(esp_wifi_wps_start(0));
+    wps_is_active = true;
+}
+
+void WifiTime::stopWPS(void) {
+    wps_is_active = false;
+    ESP_ERROR_CHECK(esp_wifi_wps_disable());
+    esp_wifi_connect();
+}
+
+bool WifiTime::isWPSActive(void) {
+    return wps_is_active;
+}
+
 void WifiTime::initSNTP(void) {
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
     sntp_setservername(0, "pool.ntp.org");
@@ -112,7 +146,8 @@ void WifiTime::initSNTP(void) {
     tzset();
 }
 
-void WifiTime::init(void) {
+void WifiTime::init(wifi_credentials_t *credentials) {
+    wifi_credentials = credentials;
     sntp_servermode_dhcp(0);
     initSTA();
     initSNTP();

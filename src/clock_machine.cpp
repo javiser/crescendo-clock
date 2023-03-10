@@ -3,21 +3,9 @@
 #include "clock_machine_states.hpp"
 #include "esp_log.h"
 
+static const char *TAG = "clock_machine";
+
 ClockMachine::ClockMachine(RotaryEncoder* encoder_ref) {
-    // INFO wifi stuff needs at least 1388 bytes stack, maybe more!
-    // Initialize the wifi + sntp stuff
-    wifi_time.init();
-    wifi_time.getTime(&stored_time);
-
-    display.init();
-
-    if (!audio_player.init(MP3_PLAYER_UART_PORT_NUM, MP3_PLAYER_TX, MP3_PLAYER_RX)) {
-        ;
-        ESP_LOGE(TAG, "There was an error initializing the MP3 player");
-    }
-
-    encoder = encoder_ref;
-
     // This will retrieve all stored data from NVS
     if (readNVSValues() == ESP_ERR_NVS_NOT_FOUND) {
         // This is the fault we get when we try to read data which has not yet been written in the memory. In that case we accept that and rewrite
@@ -25,6 +13,19 @@ ClockMachine::ClockMachine(RotaryEncoder* encoder_ref) {
         writeNVSDefaultValues();
         ESP_ERROR_CHECK(readNVSValues());
     }
+
+    // INFO wifi stuff needs at least 1388 bytes stack, maybe more!
+    // Initialize the wifi + sntp stuff
+    wifi_time.init(&wifi_credentials);
+    wifi_time.getTime(&stored_time);
+
+    display.init();
+
+    if (!audio_player.init(MP3_PLAYER_UART_PORT_NUM, MP3_PLAYER_TX, MP3_PLAYER_RX)) {
+        ESP_LOGE(TAG, "There was an error initializing the MP3 player");
+    }
+
+    encoder = encoder_ref;
 
     // Upon clock start the alarm is always off
     display.updateContent(D_E_ALARM_TIME, &alarm_time, D_A_OFF);
@@ -47,8 +48,8 @@ esp_err_t ClockMachine::readNVSValues() {
     if (err != ESP_OK) return err;
     err = nvs_get_u8(NVS_handle, NVS_ALARM_MINUTE, &alarm_time.minute);
     if (err != ESP_OK) return err;
-    size_t length = sizeof(settings);
-    err = nvs_get_blob(NVS_handle, NVS_SETTINGS, &settings, &length);
+    size_t length = sizeof(wifi_credentials_t);
+    err = nvs_get_blob(NVS_handle, NVS_WIFI_CREDENTIALS, &wifi_credentials, &length);
 
     nvs_close(NVS_handle);
 
@@ -59,8 +60,11 @@ void ClockMachine::writeNVSDefaultValues() {
     // Default some values if values not set in NVS yet
     alarm_time.hour = 7;
     alarm_time.minute = 0;
+    strcpy((char*)wifi_credentials.ssid, "Dummy");
+    strcpy((char*)wifi_credentials.password, "123456");
+
     saveAlarmTimeInNVS();
-    saveSettingsInNVS();
+    saveWifiCredentialsInNVS();
 }
 
 void ClockMachine::saveAlarmTimeInNVS() {
@@ -73,11 +77,11 @@ void ClockMachine::saveAlarmTimeInNVS() {
     nvs_close(NVS_handle);
 }
 
-void ClockMachine::saveSettingsInNVS() {
+void ClockMachine::saveWifiCredentialsInNVS() {
     nvs_handle_t NVS_handle;
 
     ESP_ERROR_CHECK(nvs_open(NVS_STORAGE, NVS_READWRITE, &NVS_handle));
-    ESP_ERROR_CHECK(nvs_set_blob(NVS_handle, NVS_SETTINGS, &settings, sizeof(settings)));
+    ESP_ERROR_CHECK(nvs_set_blob(NVS_handle, NVS_WIFI_CREDENTIALS, &wifi_credentials, sizeof(wifi_credentials_t)));
 
     nvs_close(NVS_handle);
 }
@@ -141,6 +145,15 @@ void ClockMachine::triggerTimer(uint16_t timer_ms) {
     trigger_timestamp_us = esp_timer_get_time();
 }
 
+void ClockMachine::checkWifiStatus(bool force_update) {
+    bool wifi_connected_status = wifi_time.isWifiConnected();
+    if ((last_wifi_connected_status != wifi_connected_status) || force_update) {
+        last_wifi_connected_status = wifi_connected_status;
+        display_action_t wifi_action = wifi_connected_status ? D_A_ON : D_A_OFF;
+        display.updateContent(D_E_WIFI_STATUS, NULL, wifi_action);
+    }
+}
+
 void ClockMachine::run() {
     if (active_timer_us > 0 && (esp_timer_get_time() - trigger_timestamp_us) > active_timer_us) {
         active_timer_us = 0;
@@ -149,13 +162,7 @@ void ClockMachine::run() {
         state->run(this);
     }
     // Keep track of wifi and mqtt status symbols
-    bool wifi_connected_status = wifi_time.isWifiConnected();
-    if (last_wifi_connected_status != wifi_connected_status)
-    {
-        last_wifi_connected_status = wifi_connected_status;
-        display_action_t wifi_action = wifi_connected_status ? D_A_ON : D_A_OFF; 
-        display.updateContent(D_E_WIFI_STATUS, NULL, wifi_action);
-    }
+    checkWifiStatus(false);
     bool mqtt_connected_status = wifi_time.isMQTTConnected();
     if (last_mqtt_connected_status != mqtt_connected_status)
     {

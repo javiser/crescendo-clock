@@ -4,6 +4,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "esp_wifi.h"
+#include "esp_wps.h"
 #include "esp_sntp.h"
 #include "mqtt_client.h"
 // TODO it should be possible to add this without relative paths
@@ -19,6 +20,7 @@
 
 class WifiTime {
     static void wifiEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
+    static void gotIPEventHandler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
     static void monitorWifiTask(void *pvParameter);
     void monitorWifi(void);
     void initSTA(void);
@@ -29,10 +31,15 @@ class WifiTime {
     EventGroupHandle_t wifi_event_group;
     bool wifi_is_connected = false;
     uint8_t retry_num = 0;
+    bool wps_is_active = false;
     esp_mqtt_client_handle_t mqtt_client = NULL;
+    wifi_credentials_t *wifi_credentials;
 
    public:
-    void init(void);
+    void init(wifi_credentials_t *credentials);
+    void startWPS(void);
+    void stopWPS(void);
+    bool isWPSActive(void);
     bool isTimeSet(void);
     bool isWifiConnected(void);
     void setTime(struct tm *timeinfo);

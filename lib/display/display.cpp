@@ -5,6 +5,7 @@
 #include <display.hpp>
 #include <Antonio_SemiBold75pt7b.h>
 #include <Antonio_Regular26pt7b.h>
+#include <Antonio_Light16pt7b.h>
 
 #include "esp_log.h"
 static const char *TAG = "display";
@@ -40,6 +41,7 @@ void Display::init(void) {
     queue = xQueueCreate(1, sizeof(bool));
 }
 
+// TODO Overload this function for the case we don't need to pass any parameter for the value
 void Display::updateContent(display_element_t element, void *value, display_action_t action) {
     switch (element) {
         case D_E_TIME:
@@ -199,6 +201,23 @@ void Display::updateContent(display_element_t element, void *value, display_acti
                     lcd.drawString(DISPLAY_SYMBOL_MQTT_ON, 295, 205, &Antonio_Regular26pt7b);
                     break;
                 default:
+                    break;
+            }
+            break;
+
+        case D_E_WIFI_SETTING:
+            lcd.setTextDatum(middle_center);
+            lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
+            switch (action) {
+                case D_A_ON:
+                    lcd.drawString(DISPLAY_SYMBOL_WIFI_COG, 295, 170, &Antonio_Regular26pt7b);
+                    lcd.drawString("PRESS", 220, 175, &Antonio_Light16pt7b);
+                    lcd.drawString("WPS", 220, 210, &Antonio_Light16pt7b);
+                    break;
+                default:
+                    lcd.drawString("  ", 295, 170, &Antonio_Regular26pt7b);
+                    lcd.setColor(TFT_BLACK);
+                    lcd.fillRect(180, 150, 90, 80);
                     break;
             }
             break;
