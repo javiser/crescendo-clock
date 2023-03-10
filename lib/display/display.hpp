@@ -6,9 +6,6 @@
 #include "lgfx_ili9341.hpp"
 
 #define DISPLAY_BRIGHTNESS_LEVELS_NR    4  // Not including the off-level!
-//TODO Right now not using this, maybe delete it as well
-#define LEDC_CHANNEL_RED                LEDC_CHANNEL_1  // Channel 0 reserved for display
-#define LEDC_CHANNEL_GREEN              LEDC_CHANNEL_2  // Channel 0 reserved for display
 
 #define DISPLAY_SYMBOL_WIFI_ON   ";"
 #define DISPLAY_SYMBOL_WIFI_OFF  "<"
@@ -72,8 +69,6 @@ class Display {
     void setMaxBrightness(bool request_max_brightness);
     void setIncreasedBrightness(bool request_inc_brightness);
     bool isDisplayOn(void);
-    void setLEDsDuties(uint8_t red_duty, uint8_t green_duty);
-    void fadeEffect(display_led_t led, uint16_t fade_time_on_ms, uint16_t fade_time_off_ms);
 };
 
 #endif // _INCLUDE_DISPLAY_HPP

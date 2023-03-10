@@ -13,9 +13,8 @@
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
 
-// TODO For development purposes I want a shorter time (why??), 900 000 is a better value
-#define WIFI_RECHECK_PERIOD_WITH_TIME_SYNC 10000
-#define WIFI_RECHECK_PERIOD_NO_TIME_SYNC 15000
+#define WIFI_RECHECK_PERIOD_WITH_TIME_SYNC 900000   // 15 Minutes
+#define WIFI_RECHECK_PERIOD_NO_TIME_SYNC   15000    // 15 seconds, we need a sync for the time!
 #define WIFI_NR_RETRIES 3
 
 class WifiTime {

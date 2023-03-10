@@ -309,26 +309,3 @@ void Display::setIncreasedBrightness(bool request_inc_brightness) {
 bool Display::isDisplayOn(void) {
     return (display_brightness_level > 0 || increased_brightness_requested);
 }
-
-void Display::setLEDsDuties(uint8_t red_duty, uint8_t green_duty) {
-    // TODO There is a bug in esp-idf: 255 does not mean 100% PWM, 256 is.
-    // Since we are using inverted logic, with input = 0 -> 255-0 = 255 light is slightly on
-    uint32_t ledc_duty_red = (red_duty == 0) ? 256 : (uint32_t)(255 - red_duty);
-    uint32_t ledc_duty_green = (green_duty == 0) ? 256 : (uint32_t)(255 - green_duty);
-    ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_RED, ledc_duty_red));
-    ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_GREEN, ledc_duty_green));
-    ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_RED));
-    ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_GREEN));
-}
-
-// TODO This is a temporary public function, I still don't know if I really need it like this
-void Display::fadeEffect(display_led_t led, uint16_t fade_time_on_ms, uint16_t fade_time_off_ms) {
-    ledc_channel_t channel = (led == D_LED_GREEN) ? LEDC_CHANNEL_GREEN : LEDC_CHANNEL_RED;
-    ledc_set_fade_with_time(LEDC_LOW_SPEED_MODE, channel, 0, fade_time_on_ms);
-    ledc_fade_start(LEDC_LOW_SPEED_MODE, channel, LEDC_FADE_NO_WAIT);
-    // TODO This is a blocking thing, in the future I will need to do it in a separate task or similar
-    vTaskDelay(fade_time_on_ms / portTICK_PERIOD_MS);
-    // TODO Here the hard coded 256, see comment in function setLEDsDuties
-    ledc_set_fade_with_time(LEDC_LOW_SPEED_MODE, channel, 256, fade_time_off_ms);
-    ledc_fade_start(LEDC_LOW_SPEED_MODE, channel, LEDC_FADE_NO_WAIT);
-}
