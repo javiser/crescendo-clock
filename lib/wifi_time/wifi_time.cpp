@@ -19,7 +19,7 @@ void WifiTime::wifiEventHandler(void *pvParameter, esp_event_base_t event_base, 
         if (pThis->retry_num < WIFI_NR_RETRIES) {
             esp_wifi_connect();
             pThis->retry_num++;
-            ESP_LOGI(TAG, "retry number %d for connection to AP", pThis->retry_num);
+            ESP_LOGI(TAG, "retry number %d for connection to WiFi", pThis->retry_num);
         } else {
             pThis->retry_num = 0;
             xEventGroupSetBits(pThis->wifi_event_group, WIFI_FAIL_BIT);
@@ -50,12 +50,12 @@ void WifiTime::monitorWifi(void) {
 
     // xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually happened.
     if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(TAG, "Connected to AP: %s", ESP_WIFI_SSID);
+        ESP_LOGI(TAG, "Connected to WiFi: %s", ESP_WIFI_SSID);
         wifi_is_connected = true;
         mqttAppStart();
     } 
     else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGE(TAG, "Failed to connect to AP: %s", ESP_WIFI_SSID);
+        ESP_LOGE(TAG, "Failed to connect to WiFi: %s", ESP_WIFI_SSID);
     } else {
         ESP_LOGE(TAG, "Unexpected event");
     }
