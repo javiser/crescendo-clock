@@ -14,9 +14,6 @@ void TimeState::enter(ClockMachine* clock) {
 }
 
 void TimeState::run(ClockMachine* clock) {
-    // TODO This happens in EVERY run() for each state. Maybe should be part of the parent function? But how do we solve `time_has_changed`?
-    bool time_has_changed = clock->checkTimeUpdate();
-
     if (clock->is_alarm_set &&
         (clock->stored_time.hour == clock->alarm_time.hour) &&
         (clock->stored_time.minute == clock->alarm_time.minute)) {
@@ -24,7 +21,7 @@ void TimeState::run(ClockMachine* clock) {
         clock->getDisplay()->updateContent(D_E_BED_TIME, &bed_time, D_A_OFF);
         clock->setState(AlarmState::getInstance());
     }
-    else if (clock->is_alarm_set && time_has_changed)
+    else if (clock->is_alarm_set && clock->time_has_changed)
     {
         clock_time_t bed_time = clock->getTimeToAlarm(clock->stored_time, clock->alarm_time);
         clock->getDisplay()->updateContent(D_E_BED_TIME, &bed_time, D_A_ON);
@@ -88,8 +85,6 @@ void WPSState::enter(ClockMachine* clock) {
 }
 
 void WPSState::run(ClockMachine* clock) {
-    clock->checkTimeUpdate();
-
     // The moment we get a connection we leave this state
     if (clock->getWifiTime()->isWifiConnected()) {
         // Save the acquired credentials in NVS
@@ -146,7 +141,6 @@ void AlarmState::enter(ClockMachine* clock) {
 }
 
 void AlarmState::run(ClockMachine* clock) {
-    clock->checkTimeUpdate();
 }
 
 void AlarmState::timerExpired(ClockMachine* clock) {
@@ -179,7 +173,6 @@ void AlarmState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t positi
 }
 
 void AlarmState::exit(ClockMachine* clock) {
-    // TODO There is some problem with noise after stopping the alarm. Resetting the module via HW does not help
     clock->getPlayer()->stopTrack();
     clock->getDisplay()->setMaxBrightness(false);
     clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, D_A_ON);
@@ -216,8 +209,6 @@ void SnoozeState::run(ClockMachine* clock) {
             clock->getDisplay()->updateContent(D_E_SNOOZE_TIME, &snooze_time_left_s, D_A_ON);
         }
     }
-
-    clock->checkTimeUpdate();
 }
 
 void SnoozeState::timerExpired(ClockMachine* clock) {
@@ -292,7 +283,6 @@ void SetAlarmState::enter(ClockMachine* clock) {
 }
 
 void SetAlarmState::run(ClockMachine* clock) {
-    clock->checkTimeUpdate();
 }
 
 void SetAlarmState::timerExpired(ClockMachine* clock) {

@@ -21,7 +21,6 @@ class ClockMachine {
     void saveAlarmTimeInNVS();
     void saveWifiCredentialsInNVS();
     void setState(ClockState& newState);
-    bool checkTimeUpdate(void);
     clock_time_t getTimeToAlarm(clock_time_t current_time, clock_time_t alarm_time);
     WifiTime* getWifiTime();
     Display* getDisplay();
@@ -38,6 +37,7 @@ class ClockMachine {
     clock_time_t stored_time;
     bool is_alarm_set = false;
     clock_time_t alarm_time;
+    bool time_has_changed;
 
     struct {
         uint8_t crescendo_factor = 6;     // "crescendo_factor" half-seconds per volume step. If factor == 2 -> 30 seconds until maximum volume
@@ -49,6 +49,7 @@ class ClockMachine {
   private:
     esp_err_t readNVSValues();
     void writeNVSDefaultValues();
+    void checkTimeUpdate(void);
 
     ClockState* state;
     WifiTime wifi_time;

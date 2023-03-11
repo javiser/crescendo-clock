@@ -93,7 +93,7 @@ void ClockMachine::setState(ClockState& newState) {
     state->enter(this);  // do stuff after we change state
 }
 
-bool ClockMachine::checkTimeUpdate(void) {
+void ClockMachine::checkTimeUpdate(void) {
     clock_time_t current_time;
     wifi_time.getTime(&current_time);
 
@@ -102,10 +102,10 @@ bool ClockMachine::checkTimeUpdate(void) {
         stored_time.hour = current_time.hour;
         stored_time.minute = current_time.minute;
         display.updateContent(D_E_TIME, &stored_time, D_A_ON);
-        return true;
+        time_has_changed = true;
     }
 
-    return false;
+    time_has_changed = false;
 }
 
 clock_time_t ClockMachine::getTimeToAlarm(clock_time_t current_time, clock_time_t alarm_time) {
@@ -159,6 +159,7 @@ void ClockMachine::run() {
         active_timer_us = 0;
         state->timerExpired(this);
     } else {
+        checkTimeUpdate();
         state->run(this);
     }
     // Keep track of wifi and mqtt status symbols
