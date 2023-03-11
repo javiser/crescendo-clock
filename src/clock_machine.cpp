@@ -14,7 +14,6 @@ ClockMachine::ClockMachine(RotaryEncoder* encoder_ref) {
         ESP_ERROR_CHECK(readNVSValues());
     }
 
-    // INFO wifi stuff needs at least 1388 bytes stack, maybe more!
     // Initialize the wifi + sntp stuff
     wifi_time.init(&wifi_credentials);
     wifi_time.getTime(&stored_time);

@@ -8,7 +8,6 @@
 #include "clock_common.hpp"
 
 extern "C" void app_main() {
-    // INFO NVS initialization needs 560 bytes stack!
     // Initialize NVS (needs to be done first thing in main!)
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -19,12 +18,10 @@ extern "C" void app_main() {
     }
     ESP_ERROR_CHECK(ret);
 
-    // INFO rotary encoder 96 stack bytes
     // Initialise the rotary encoder device with the GPIOs for A and B signals
     RotaryEncoder encoder;
     QueueHandle_t event_queue = encoder.init(ROT_ENC_A_GPIO, ROT_ENC_B_GPIO, ROT_ENC_BUTTON_GPIO, ROT_ENC_BUTTON_INVERTED);
 
-    // INFO machine stack size = 1632 bytes
     ClockMachine machine(&encoder);  // By default a clock machine starts in state "TIME"
     rotary_encoder_event_t event;
 
