@@ -113,7 +113,6 @@ void WifiTime::initSTA(void) {
 
     esp_wifi_set_storage(WIFI_STORAGE_FLASH);
 
-    // TODO I decreased the stack size from 4096 to 1024 for a guest wifi, but in the real wifi there was stack overflow, so back to 4096. What is the right spot?
     xTaskCreate(this->monitorWifiTask, "monitor_wifi_task", 4096, this, 10, NULL);
 }
 
@@ -182,7 +181,6 @@ void WifiTime::getTime(clock_time_t *t) {
     t->minute = (uint8_t)timeinfo.tm_min;
 }
 
-//TODO I am thinking, that we could add a define/config to deactivate the MQTT stuff completely, to avoid misleading symbols
 void WifiTime::mqttAppStart(void) {
     esp_mqtt_client_config_t mqttConfig = {};
     mqttConfig.broker.address.uri = MQTT_BROKER_ADDRESS;

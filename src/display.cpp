@@ -7,9 +7,6 @@
 #include <Antonio_Regular26pt7b.h>
 #include <Antonio_Light16pt7b.h>
 
-#include "esp_log.h"
-static const char *TAG = "display";
-
 void Display::monitorBrightnessTask(void *pvParameter) {
     Display *pThis = (Display *)pvParameter;
     bool event;
@@ -36,7 +33,6 @@ void Display::init(void) {
     };
     ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, LIGHT_ADC_CHANNEL, &config));
 
-    // TODO When I didn't have debug information in controlBrightness I could set the stack to 768 (but not 512)
     xTaskCreate(this->monitorBrightnessTask, "monitor_brightness_task", 2048, this, 1, NULL);
     queue = xQueueCreate(1, sizeof(bool));
 }
@@ -275,15 +271,6 @@ void Display::controlBrightness(void) {
             setBrightness(display_brightness_level);
         }
     }
-/*
-    // TODO For debugging purposes only, I don't care here about sprites or similar
-    char light_buf[10];
-    sprintf(light_buf, "%03d (%d)", ambient_light, display_brightness_level);
-    ESP_LOGI(TAG, "Ambient light = %d", ambient_light);
-    lcd.setTextDatum(bottom_right);
-    lcd.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-    lcd.drawString(light_buf, lcd.width() - 5, lcd.height() - 5, &FreeSans12pt7b);
-	*/
 }
 
 void Display::setBrightness(uint8_t brightness_level) {

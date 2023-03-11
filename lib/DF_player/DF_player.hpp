@@ -78,7 +78,6 @@ class DFPlayer {
     
     dfplayer_status_error_type_t getCurrentStatus() { return (dfplayer_status_error_type_t)readFeedbackFromCommand(0x42); }
     uint16_t readVolume() { return readFeedbackFromCommand(0x43); }
-    // TODO clean up the methods I don't need. Which will be probably a lot of them
     uint16_t getCurrentFileNumber() { return readFeedbackFromCommand(0x4C); }
     uint16_t getNumberOfFilesInFolder(int folder_number) { return readFeedbackFromCommand(0x4E, folder_number); }
     uint16_t getNumberOfFolders() { return readFeedbackFromCommand(0x4F); }
