@@ -2,8 +2,7 @@
 #define _INCLUDE_LGFX_ILI9341_HPP
 
 #include <lgfx/v1_init.hpp>
-// TODO it should be possible to add this without relative paths
-#include "../../src/clock_common.hpp"
+#include "clock_common.hpp"
 
 #define LGFX_USE_V1
 

@@ -7,8 +7,7 @@
 #include "esp_wps.h"
 #include "esp_sntp.h"
 #include "mqtt_client.h"
-// TODO it should be possible to add this without relative paths
-#include "../../src/clock_common.hpp"
+#include "clock_common.hpp"
 
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1

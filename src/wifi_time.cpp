@@ -1,7 +1,6 @@
 #include "esp_log.h"
 #include <wifi_time.hpp>
-// TODO it should be possible to add this without relative paths. Maybe we should get rid of the "lib" concept?
-#include "../../src/credentials.hpp"
+#include "credentials.hpp"
 
 static const char *TAG = "wifi_time";
 
@@ -183,6 +182,7 @@ void WifiTime::getTime(clock_time_t *t) {
     t->minute = (uint8_t)timeinfo.tm_min;
 }
 
+//TODO I am thinking, that we could add a define/config to deactivate the MQTT stuff completely, to avoid misleading symbols
 void WifiTime::mqttAppStart(void) {
     esp_mqtt_client_config_t mqttConfig = {};
     mqttConfig.broker.address.uri = MQTT_BROKER_ADDRESS;
