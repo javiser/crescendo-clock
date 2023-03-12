@@ -4,6 +4,7 @@
 #include "freertos/queue.h"
 #include "esp_adc/adc_oneshot.h"
 #include "lgfx_ili9341.hpp"
+#include "mqtt_config.hpp"
 
 #define DISPLAY_BRIGHTNESS_LEVELS_NR    4  // Not including the off-level!
 
