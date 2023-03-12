@@ -42,11 +42,6 @@ typedef enum {
     D_A_TWO_BARS,
 } display_action_t;
 
-typedef enum {
-    D_LED_GREEN = 0,
-    D_LED_RED,
-} display_led_t;
-
 class Display {
     LGFX_ILI9341 lcd;
     adc_oneshot_unit_handle_t adc1_handle;
