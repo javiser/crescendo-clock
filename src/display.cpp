@@ -180,17 +180,26 @@ void Display::updateContent(display_element_t element, display_action_t action) 
             switch (action) {
                 case D_A_OFF:
                     lcd.setTextColor(TFT_RED, TFT_BLACK);
+                    #ifdef MQTT_ACTIVE
                     lcd.drawString(DISPLAY_SYMBOL_WIFI_OFF, 295, 170, &Antonio_Regular26pt7b);
+                    #else
+                    lcd.drawString(DISPLAY_SYMBOL_WIFI_OFF, 295, 205, &Antonio_Regular26pt7b);
+                    #endif
                     break;
                 case D_A_ON:
                     lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+                    #ifdef MQTT_ACTIVE
                     lcd.drawString(DISPLAY_SYMBOL_WIFI_ON, 295, 170, &Antonio_Regular26pt7b);
+                    #else
+                    lcd.drawString(DISPLAY_SYMBOL_WIFI_ON, 295, 205, &Antonio_Regular26pt7b);
+                    #endif
                     break;
                 default:
                     break;
             }
             break;
 
+        #ifdef MQTT_ACTIVE
         case D_E_MQTT_STATUS:
             lcd.setTextDatum(middle_center);
             switch (action) {
@@ -206,6 +215,7 @@ void Display::updateContent(display_element_t element, display_action_t action) 
                     break;
             }
             break;
+        #endif
 
         case D_E_WIFI_SETTING:
             lcd.setTextDatum(middle_center);

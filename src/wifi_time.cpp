@@ -1,11 +1,12 @@
 #include "esp_log.h"
 #include <wifi_time.hpp>
-#include "credentials.hpp"
 
 static const char *TAG = "wifi_time";
 
+#ifdef MQTT_ACTIVE
 // I would have liked to add this as a class member but I don't know yet how to solve this
 static bool mqtt_is_connected = false;
+#endif
 
 void WifiTime::wifiEventHandler(void *pvParameter, esp_event_base_t event_base, int32_t event_id, void *event_data) {
     WifiTime *pThis = (WifiTime *)pvParameter;
@@ -31,10 +32,14 @@ void WifiTime::wifiEventHandler(void *pvParameter, esp_event_base_t event_base, 
                 esp_wifi_get_config(WIFI_IF_STA, &wifi_config);
                 strcpy((char*)pThis->wifi_credentials->ssid, (char*)wifi_config.sta.ssid);
                 strcpy((char*)pThis->wifi_credentials->password, (char*)wifi_config.sta.password);
+                #ifdef MQTT_ACTIVE
                 pThis->stopWPS();
+                #endif
                 break;
             default:
+                #ifdef MQTT_ACTIVE
                 pThis->stopWPS();
+                #endif
                 break;
         }
 
@@ -66,7 +71,9 @@ void WifiTime::monitorWifi(void) {
     if (bits & WIFI_CONNECTED_BIT) {
         ESP_LOGI(TAG, "Connected to WiFi: %s", wifi_credentials->ssid);
         wifi_is_connected = true;
+        #ifdef MQTT_ACTIVE
         mqttAppStart();
+        #endif
     } 
     else if (bits & WIFI_FAIL_BIT) {
         ESP_LOGE(TAG, "Failed to connect to WiFi: %s", wifi_credentials->ssid);
@@ -181,6 +188,7 @@ void WifiTime::getTime(clock_time_t *t) {
     t->minute = (uint8_t)timeinfo.tm_min;
 }
 
+#ifdef MQTT_ACTIVE
 void WifiTime::mqttAppStart(void) {
     esp_mqtt_client_config_t mqttConfig = {};
     mqttConfig.broker.address.uri = MQTT_BROKER_ADDRESS;
@@ -230,3 +238,4 @@ void WifiTime::sendMQTTAlarmStopped(void)
     if (esp_mqtt_client_publish(mqtt_client, "wecker/alarm_off", NULL, 0, 0, 0) == -1)
         ESP_LOGE(TAG, "Error sending MQTT message for alarm stopped");
 }
+#endif

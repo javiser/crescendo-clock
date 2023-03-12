@@ -60,8 +60,10 @@ class ClockMachine {
     int64_t trigger_timestamp_us;
     wifi_credentials_t wifi_credentials;
     bool last_wifi_connected_status;
-    bool last_mqtt_connected_status;
     bool last_audio_online_status;
+    #ifdef MQTT_ACTIVE
+    bool last_mqtt_connected_status;
+    #endif
 };
 
 #endif /* _INCLUDE_CLOCK_MACHINE_HPP_ */

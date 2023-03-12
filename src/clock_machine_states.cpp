@@ -137,7 +137,9 @@ void AlarmState::enter(ClockMachine* clock) {
     crescendo_counter = clock->settings.crescendo_factor;   // To force setting the volume in the next trigger
     clock->getPlayer()->loopTrack(clock->settings.melody_nr);
     clock->triggerTimer(10);  // Short trigger to avoid copying code that will be in the timerExpired method
+    #ifdef MQTT_ACTIVE
     clock->getWifiTime()->sendMQTTAlarmTriggered();
+    #endif
 }
 
 void AlarmState::run(ClockMachine* clock) {
@@ -245,7 +247,9 @@ void SnoozeState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t posit
         clock->getDisplay()->updateContent(D_E_SNOOZE_CANCEL, D_A_OFF);
         clock->is_alarm_set = false;
         clock->getDisplay()->updateContent(D_E_ALARM_TIME, &clock->alarm_time, D_A_OFF);
+        #ifdef MQTT_ACTIVE
         clock->getWifiTime()->sendMQTTAlarmStopped();
+        #endif
         clock->setState(TimeState::getInstance());
     }
 

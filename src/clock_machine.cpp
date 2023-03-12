@@ -31,8 +31,10 @@ ClockMachine::ClockMachine(RotaryEncoder* encoder_ref) {
 
     // We initialize with the opposite values to force a display update in the next run
     last_wifi_connected_status = !wifi_time.isWifiConnected();
-    last_mqtt_connected_status = !wifi_time.isMQTTConnected();
     last_audio_online_status = !audio_player.isDeviceOnline();
+    #ifdef MQTT_ACTIVE
+    last_mqtt_connected_status = !wifi_time.isMQTTConnected();
+    #endif
 
     state = static_cast<ClockState*>(new TimeState());
     state->enter(this);
@@ -163,6 +165,7 @@ void ClockMachine::run() {
     }
     // Keep track of wifi and mqtt status symbols
     checkWifiStatus(false);
+    #ifdef MQTT_ACTIVE
     bool mqtt_connected_status = wifi_time.isMQTTConnected();
     if (last_mqtt_connected_status != mqtt_connected_status)
     {
@@ -170,6 +173,7 @@ void ClockMachine::run() {
         display_action_t mqtt_action = mqtt_connected_status ? D_A_ON : D_A_OFF; 
         display.updateContent(D_E_MQTT_STATUS, mqtt_action);
     }
+    #endif
 
     // Keep track of audio player status, if not online then show this as error
     bool audio_online_status = audio_player.isDeviceOnline();
