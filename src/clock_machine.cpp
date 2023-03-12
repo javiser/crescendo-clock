@@ -105,8 +105,9 @@ void ClockMachine::checkTimeUpdate(void) {
         display.updateContent(D_E_TIME, &stored_time, D_A_ON);
         time_has_changed = true;
     }
-
-    time_has_changed = false;
+    else {
+        time_has_changed = false;
+    }
 }
 
 clock_time_t ClockMachine::getTimeToAlarm(clock_time_t current_time, clock_time_t alarm_time) {
