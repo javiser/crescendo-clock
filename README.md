@@ -1,8 +1,10 @@
 # Crescendo Clock - an ESP32 based alarm clock to wake up gently
 A self-made clock with a gentle crescendo functionality.
 
-<img src="hardware/pictures/crescendo_clock.jpg" width="40%">
-<img src="hardware/pictures/crescendo_clock_rear.jpg" width="40%">
+<p float="left">
+  <img src="hardware/pictures/crescendo_clock.jpg" width="40%">
+  <img src="hardware/pictures/crescendo_clock_rear.jpg" width="40%">
+</p>
 
 ## Highlights
 - Gentle alarm-clock with a crescendo function to wake up slowly and peacefully
