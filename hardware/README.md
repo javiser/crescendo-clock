@@ -22,11 +22,12 @@ The big connector on the rear side of the display is not needed and needs to be 
 
 ### ESP32 board RGB LEDs removal
 The [ESP-C3-32S-Kit board](https://www.waveshare.com/esp-c3-32s-kit.htm) has some embedded LEDs which need to be removed in advance. This is just done using brute force and some small pliers. This is the result:
-<img src="pictures/ESP32_no_LEDs.jpg" width="40%">
+<p float="left">
+    <img src="pictures/ESP32_no_LEDs.jpg" width="40%">
+</p>
 
 ### DFplayer modification
 The [DFPlayer I am using](https://www.berrybase.de/dfrobot-dfplayer-mini-mp3-player) has some noise problems after the alarm sound is stopped. This seems to be a well known problems and after some research I came into this solution https://work-now-dammit.blogspot.com/2016/08/dfplayer-mp3-module-power-onoff-clicks.html. The main idea is to break the connection of the pin1 of the 8002 amplifier chip with GND and wire that to the BUSY pin (16) of the module, something like this (my apologies for the dirty work):
-
 <p float="left">
     <img src="pictures/DFPlayer_hack_1.jpg" width="40%">
     <img src="pictures/DFPlayer_hack_2.jpg" width="40%">
@@ -55,15 +56,35 @@ You can lift the pin 1 leg of 8002 amplifier with a very pointy soldering iron a
 </p>
 
 ## 3D printed case
-STL files for the case, the rear cover and the knurled rotary botton are available:
-
-I printed these with PLA using an Ender 3 v2. Pay attention to the orientation when slicing: the clock front side, the outside face of the rear cover as well as the top face of the button should be your first layer. You may use supports for the big case, I didn't use any and it went ok. 
+STL files for the [case](3D/case.stl), the [rear cover](3D/rear_cover.stl) and the [knurled rotary botton](3D/knurled_button.stl) are available:
+<p float="left">
+    <img src="3D/case.png" width="40%">
+    <img src="3D/knurled_button.png" width="40%">
+</p>
+I printed these with PLA using an Ender 3 v2. Pay attention to the orientation when slicing: the clock front side, the outside face of the rear cover as well as the top face of the button should be your first layer. You may use supports for the big case, I didn't use any and it went ok
 
 ## Final assembly
-1. You will need 
-<img src="pictures/clock_inside.jpg" width="40%">
+In order to assemble everything you will need at least:
+- Soldering iron, tin, etc
+- Cables and connectors (i.e. with dupont crimps)
+- Small brass inserts and screws. 
+
+Follow these steps:
+1. Put an SD card with the necessary audio files as explained in the [resources section](../resources/README.md)
+2. Put the brass inserts in for the four internal corners where the board is attached
+3. Prepare the cables and connectors in advance, play attention to where everything is attached and the length of the required cables
+4. Slide in the finished board and screw it into the inserts
+5. Connect the cables to the rotary encoder and slide it into its place. Put the washer and hex nut and tighten it. Make sure it is perpendicular. Insert the button into the shaft
+6. Fix the speaker on the rear cover using some strong glue on the 4 small on on the internal face of the rear cover
+7. Make sure everything is connected, close the cover and put the screws in place
+
+Final result:
+<p float="left">
+    <img src="pictures/clock_inside.jpg" width="40%">
+</p>
 
 ## Possible modifications and variants
 The components used are just what I could get my hands on or what made sense to me. Here some considerations:
 - It should be possible to use any other ESP32 board, specially ESP32C3 like the official [ESP32-C3-DevKitM-1](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/hw-reference/esp32c3/user-guide-devkitm-1.html) from Espressif. But the board design and/or pin assignments defined in [clock_common.hpp](src/clock_common.hpp) may need a corresponding adjustment. Unfortunately, the ESP32 board I used has been discontinued by Waveshare, so that future builds of this clock will need these adaptions. I am already working on a new version based on the [Seeed Studio XIAO ESP32C3](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/)
 - Other LCD displays could work as well, specially if the same ILI9341 driver is used, but maybe other settings are required. Since the used library LovyanGFX supports a lot of different displays, changing to another display is just a matter of adjusting the configuration and, if the resolution changes, the layout (font sizes, symbol and text positions)
+- In general any other component like the rotary encoder, speaker or the light sensor should be exchangeable with no or little effort
