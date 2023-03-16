@@ -7,7 +7,7 @@
 #ifdef MQTT_ACTIVE
 #define MQTT_BROKER_ADDRESS "mqtt://192.168.178.29:1883"
 #define MQTT_USERNAME "homeassistant"
-#define MQTT_PASSWORD "eihohroh1fei8zahwe9Aiku4yohcohng9sheefiekohSaqu2Eash4ooka7bohCh2"
+#define MQTT_PASSWORD "yourverynicemqttpassword"
 #endif
 
 #endif // _INCLUDE_MQTT_CONFIG_HPP_
