@@ -40,7 +40,7 @@ For this project I have used the inspiration and code from many other projects a
 - For the rotary encoder I used some code from https://github.com/LennartHennigs/ESPRotary as well as from https://github.com/craftmetrics/esp32-button. The code from https://github.com/DavidAntliff/esp32-rotary-encoder was also a good source of inspiration
 - For the finite state machine implementation I borrowed the ideas from https://www.aleksandrhovhannisyan.com/blog/finite-state-machine-fsm-tutorial-implementing-an-fsm-in-c/ as well as from https://stackoverflow.com/questions/14676709/c-code-for-state-machine
 - For the DFPlayer module used this datasheet to look up the specifications https://cdn.shopify.com/s/files/1/1509/1638/files/MP3_Player_Modul_Datenblatt.pdf?10537896017176417241. I also found some undocumented functions in the library implementation in https://github.com/DFRobot/DFRobotDFPlayerMini
-- [Adafruit](https://www.adafruit.com/) for the many resources I used for the creation of custom fonts and symbols (see a [more detailed description](resources/README.md) in the resources folder) as well as for the great inspiration from their [PyPortal Alarm Clock](https://learn.adafruit.com/pyportal-alarm-clock), out of which I created a very first concept of this kind of crescendo clock. 
+- [Adafruit](https://www.adafruit.com/) for the many resources I used for the creation of custom fonts and symbols (see a [more detailed description](fonts/README.md) in the resources folder) as well as for the great inspiration from their [PyPortal Alarm Clock](https://learn.adafruit.com/pyportal-alarm-clock), out of which I created a very first concept of this kind of crescendo clock. 
 
 ## License
 Copyright (c) 2023 javiser

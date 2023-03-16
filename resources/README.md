@@ -1,3 +1,0 @@
-# Resources
-
-Work in progress
