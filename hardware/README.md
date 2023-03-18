@@ -1,13 +1,14 @@
 # Hardware
 ## Schematics and PCB design
 <p float="left">
-    <img src="pictures/schematic.png" width="40%">
-    <img src="pictures/PCB_design.png" width="40%">
+    <img src="pictures/schematic.png" width="30%">
+    <img src="pictures/PCB_design.png" width="30%">
+    <img src="pictures/board_preview.png" width="30%">
 </p>
 A couple of mentions to design considerations:
 - The capacitors were used in a previous design to add some debouncing. In the current [rotary encoder](https://www.ebay.de/itm/173657244984) used, the board most likely has that already. But it doesn't harm to have them, at least in practice
 - With the exception of some SPI pins for the [display](https://www.waveshare.com/2.4inch-lcd-module.htm) and the fact that the light sensor needs an analog input, which pins to use on the ESP32 board should is actually a very free decision
-- The design was made using EasyEDA and the [created GERBER files](Gerber_PCB_Crescendo_Clock_Board_rev1.1.zip) and the board manufactured by [JLCPCB](https://jlcpcb.com). This is the result:
+- The design was made using EasyEDA and the [created GERBER files](Gerber_PCB_Crescendo_Clock_Board_rev2.0.zip) and the board manufactured by [JLCPCB](https://jlcpcb.com). This is the result:
 
 <img src="pictures/board.jpg" width="40%">
 
