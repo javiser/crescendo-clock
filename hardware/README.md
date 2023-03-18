@@ -26,15 +26,6 @@ The [ESP-C3-32S-Kit board](https://www.waveshare.com/esp-c3-32s-kit.htm) has som
     <img src="pictures/ESP32_no_LEDs.jpg" width="40%">
 </p>
 
-### DFplayer modification
-The [DFPlayer I am using](https://www.berrybase.de/dfrobot-dfplayer-mini-mp3-player) has some noise problems after the alarm sound is stopped. This seems to be a well known problems and after some research I came into this solution https://work-now-dammit.blogspot.com/2016/08/dfplayer-mp3-module-power-onoff-clicks.html. The main idea is to break the connection of the pin1 of the 8002 amplifier chip with GND and wire that to the BUSY pin (16) of the module, something like this (my apologies for the dirty work):
-<p float="left">
-    <img src="pictures/DFPlayer_hack_1.jpg" width="40%">
-    <img src="pictures/DFPlayer_hack_2.jpg" width="40%">
-</p>
-
-You can lift the pin 1 leg of 8002 amplifier with a very pointy soldering iron and then solder a small cable from that leg to the pin 16 of the module.
-
 ### Soldering all together
 1. Solder the 1x20 pin male header on the display and 2 additional 1x1 ones as support. You can use the still empty PCB board as a holder:
 <p float="left">
