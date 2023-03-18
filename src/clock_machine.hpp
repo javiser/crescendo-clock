@@ -42,7 +42,7 @@ class ClockMachine {
     struct {
         uint8_t crescendo_factor = 6;     // "crescendo_factor" half-seconds per volume step. If factor == 2 -> 30 seconds until maximum volume
         uint16_t snooze_time_s = 300;     // Snooze time in seconds (must be a factor of 5!)
-        bool sounds_on = false;
+        bool alarm_set_confirmation_sound = false;
         uint8_t melody_nr = 1;
     } settings;
 

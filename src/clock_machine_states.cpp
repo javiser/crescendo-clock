@@ -346,7 +346,7 @@ void SetAlarmState::exit(ClockMachine* clock) {
     clock->is_alarm_set = true;  // After setting the new alarm time alarm is set
     clock->saveAlarmTimeInNVS();
 
-    if (clock->settings.sounds_on) {
+    if (clock->settings.alarm_set_confirmation_sound) {
         clock->getPlayer()->setVolume(10);
         clock->getPlayer()->playTrack(CONFIRMATION_TRACK);
     }
