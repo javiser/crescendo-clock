@@ -5,7 +5,6 @@
 #include <wifi_time.hpp>
 #include "clock_machine.hpp"
 
-#define NUMBER_MELODIES     3
 #define CONFIRMATION_TRACK  101
 
 // Forward declaration to resolve circular dependency/include
