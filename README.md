@@ -34,6 +34,11 @@ Assuming basic knowledge about platformio, ESP-IDF development and ESP32 boards:
 
 Just build and upload the code! If you upload to code to the board with no hardware connected to it (display, encoder, etc.) you should at least be able to see some basic debug messages via Serial Monitor related to the failed WiFi connection.
 
+## Waking melodies and other settings
+In this repository there is not any audio file for the waking melody. In the [DFPlyer mini wiki](https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299) you will find instructions on how to create your own files (see chapter ["Copy your mp3 into you micro SD card"](https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299#target_6)). I have a folder called `mp3` in the SD-card and inside it a single file called `0001.mp3`. You can add further files and change the value of `melody_nr` in the `settings` struct in [src/clock_machine.hpp](src/clock_machine.hpp) and add the corresponding mp3 file. In case you want a confirmation sound when you activate the alarm, then set the settings variable `alarm_set_confirmation_sound` to true and make sure a (short) `0101.mp3` file exists. This does not work really well, as the DFPlayer doesn't seem to like short audio files, and I will most likely remove this feature in a near future.
+
+Furthermore, you can change also the snooze time (default = 5 minutes) and the "crescendo speed" in the same `settings` structure. These are fixed values and cannot be changed after compilation.
+
 ## Credits and acknowledgment
 For this project I have used the inspiration and code from many other projects and sources: 
 - I looked up and partly copied some code from the official esp-idf examples contained in https://github.com/espressif/esp-idf/tree/master/examples (mainly those related to SNTP, WPS, MQTT and Wifi functions)
