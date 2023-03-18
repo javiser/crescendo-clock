@@ -17,10 +17,10 @@ A self-made clock with a gentle crescendo functionality.
 
 ## Electrical components
 These are the main electrical components used in this project:
-- [ESP-C3-32S-Kit ESP32 WiFi+Bluetooth Development Board](https://www.waveshare.com/esp-c3-32s-kit.htm) with ESP32C3 chip from Ai-Thinker which I have "tuned" to get rid of the built-in LEDs. 
+- [Seeed Studio XIAO ESP32C3 board](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/)
 - [Rotary encoder with board](https://www.ebay.de/itm/173657244984)
 - [2.4 inch display with ILI9341 driver](https://www.waveshare.com/2.4inch-lcd-module.htm)
-- [DFRobot's DFPlayer Mini](https://www.dfrobot.com/product-1121.html) (assuming I am using the same HW, see [the hardware folder](hardware/README.md) to see more details on this topic)
+- [DFRobot's DFPlayer Mini](https://www.dfrobot.com/product-1121.html)
 - [Light sensor](https://www.adafruit.com/product/2748)
 - [Mini-speaker](https://www.ebay.de/itm/313914312809)
 - Miscellaneous components, like resistors, capacitors, wires...

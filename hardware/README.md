@@ -23,12 +23,6 @@ The big connector on the rear side of the display is not needed and needs to be 
     <img src="pictures/display_removed_connector.jpg" width="40%">
 </p>
 
-### ESP32 board RGB LEDs removal
-The [ESP-C3-32S-Kit board](https://www.waveshare.com/esp-c3-32s-kit.htm) has some embedded LEDs which need to be removed in advance. This is just done using brute force and some small pliers. This is the result:
-<p float="left">
-    <img src="pictures/ESP32_no_LEDs.jpg" width="40%">
-</p>
-
 ### Soldering all together
 1. Solder the 1x20 pin male header on the display and 2 additional 1x1 ones as support. You can use the still empty PCB board as a holder:
 <p float="left">
@@ -67,7 +61,7 @@ In order to assemble everything you will need at least:
 - Small brass inserts and screws. 
 
 Follow these steps:
-1. Put an SD card with the necessary audio files as explained in the [resources section](../resources/README.md)
+1. Put an SD card with the necessary audio files
 2. Put the brass inserts in for the four internal corners where the board is attached
 3. Prepare the cables and connectors in advance, play attention to where everything is attached and the length of the required cables
 4. Slide in the finished board and screw it into the inserts
@@ -83,6 +77,6 @@ Final result:
 ## Possible modifications and variants
 The components used are just what I could get my hands on or what made sense to me. Here some considerations:
 
-- It should be possible to use any other ESP32 board, specially ESP32C3 like the official [ESP32-C3-DevKitM-1](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/hw-reference/esp32c3/user-guide-devkitm-1.html) from Espressif. But the board design and/or pin assignments defined in [clock_common.hpp](src/clock_common.hpp) may need a corresponding adjustment. Unfortunately, the ESP32 board I used has been discontinued by Waveshare, so that future builds of this clock will need these adaptions. I am already working on a new version based on the [Seeed Studio XIAO ESP32C3](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/)
+- It should be possible to use any other ESP32 board. The previous version used the [ESP-C3-32S-Kit ESP32 WiFi+Bluetooth Development Board](https://www.waveshare.com/esp-c3-32s-kit.htm). You just need to make sure that you have at least 11 pins available. The pin assignments defined in [clock_common.hpp](src/clock_common.hpp) will most likely need an adjustment. If you take a variant different from the ESP32C3 you might require more extensive changes as well
 - Other LCD displays could work as well, specially if the same ILI9341 driver is used, but maybe other settings are required. Since the used library LovyanGFX supports a lot of different displays, changing to another display is just a matter of adjusting the configuration and, if the resolution changes, the layout (font sizes, symbol and text positions)
 - In general any other component like the rotary encoder, speaker or the light sensor should be exchangeable with no or little effort
