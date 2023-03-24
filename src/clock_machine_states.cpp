@@ -170,8 +170,6 @@ void AlarmState::buttonLongPressed(ClockMachine* clock) {
 }
 
 void AlarmState::encoderRotated(ClockMachine* clock, rotary_encoder_pos_t position, rotary_encoder_dir_t direction) {
-    // Do some stuff in the run process
-    clock->setState(TimeState::getInstance());
 }
 
 void AlarmState::exit(ClockMachine* clock) {
