@@ -1,17 +1,27 @@
 # Hardware
+
+<p align="center">
+  <a href="#schematics-and-pcb-design">Highlights</a> •
+  <a href="#board-assembly">Board assembly</a> •
+  <a href="#3d-printed-case">3D printed case</a> •
+  <a href="#final-assembly">Final assembly</a> •
+  <a href="#modifications">Modifications</a><br>
+</p>
+
 ## Schematics and PCB design
 <p float="left">
-    <img src="pictures/schematic.png" width="40%">
-    <img src="pictures/PCB_design.png" width="40%">
+    <img src="pictures/schematic.png" width="25%">
+    <img src="pictures/PCB_design.png" width="30%">
+    <img src="pictures/board_preview.png" width="30%">
 </p>
 
 A couple of mentions to design considerations:
 
-- The capacitors were used in a previous design to add some debouncing. In the current [rotary encoder](https://www.ebay.de/itm/173657244984) used, the board most likely has that already. But it doesn't harm to have them, at least in practice
+- The capacitors were used in a previous design to add some debouncing. In the current [rotary encoder](https://www.ebay.de/itm/173657244984) used, these capacitors are already include and are not soldered anymore
 - With the exception of some SPI pins for the [display](https://www.waveshare.com/2.4inch-lcd-module.htm) and the fact that the light sensor needs an analog input, which pins to use on the ESP32 board should is actually a very free decision
-- The design was made using EasyEDA and the [created GERBER files](Gerber_PCB_Crescendo_Clock_Board_rev1.1.zip) and the board manufactured by [JLCPCB](https://jlcpcb.com). This is the result:
+- The design was made using EasyEDA and the [created GERBER files](PCB/Gerber_PCB_Crescendo_Clock_Board_rev2.0.zip) and the board manufactured by [JLCPCB](https://jlcpcb.com). This is the result:
 
-<img src="pictures/board.jpg" width="40%">
+<img src="pictures/board.jpg" width="80%">
 
 ## Board assembly
 
@@ -22,66 +32,86 @@ The big connector on the rear side of the display is not needed and needs to be 
     <img src="pictures/display_removed_connector.jpg" width="40%">
 </p>
 
-### ESP32 board RGB LEDs removal
-The [ESP-C3-32S-Kit board](https://www.waveshare.com/esp-c3-32s-kit.htm) has some embedded LEDs which need to be removed in advance. This is just done using brute force and some small pliers. This is the result:
-<p float="left">
-    <img src="pictures/ESP32_no_LEDs.jpg" width="40%">
-</p>
-
 ### Soldering all together
-1. Solder the 1x20 pin male header on the display and 2 additional 1x1 ones as support. You can use the still empty PCB board as a holder:
+1. Solder the 1x8 pin male header on the display and 2 additional 1x1 ones as support. You can use the still empty PCB board as a holder:
 <p float="left">
     <img src="pictures/display_pins_soldering_preparation.jpg" width="40%">
-    <img src="pictures/display_pins_soldered.jpg" width="40%">
+    <img src="pictures/display_pins_soldered.jpg" width="35%">
 </p>
 
 2. Solder a 1x3 90° pin male header on the [light sensor breakout board](https://www.adafruit.com/product/2748). Pay attention to the orientation!
 <p float="left">
-    <img src="pictures/light_sensor.jpg" width="40%">
+    <img src="pictures/light_sensor.jpg" width="30%">
 </p>
 
 3. Solder all components to the PCB board and trim the excess length of the pins to make room for the display board
 <p float="left">
-    <img src="pictures/board_backside_populated.jpg" width="40%">
+    <img src="pictures/board_backside_populated.jpg" width="35%">
     <img src="pictures/board_trimmed_pins.jpg" width="40%">
 </p>
 
-4. Solder the display on the other side of the board. After that it would be a good time to do a sanity check and connect the board to the PC and upload the SW:
+4. Solder the display on the other side of the board. 
 <p float="left">
-    <img src="pictures/board_sanity_check.jpg" width="40%">
+    <img src="pictures/soldered_display.jpg" width="40%">
+    <img src="pictures/side_view.jpg" width="9%">
 </p>
+
+5. Prepare a connection cable with 5 pins for the connection between the board and the rotary encoder breakout. Again, I used dupont connectors for this:
+
+<img src="pictures/rotary_encoder_cable.jpg" width="30%">
+
+6. If necessary, change the connector of the mini-speaker. I used dupont connectors for this:
+   
+<p float="left">
+    <img src="pictures/speaker_original.jpg" width="30%">
+    <img src="pictures/speaker_preparation.jpg" width="25%">
+    <img src="pictures/speaker_with_connector.jpg" width="25%">
+</p>
+
+7. After that it would be a good time to do a sanity check and connect everything together, flash the SW into the board and check whether everything is working as expected:
+<img src="pictures/board_sanity_check.jpg" width="40%">
 
 ## 3D printed case
 STL files for the [case](3D/case.stl), the [rear cover](3D/rear_cover.stl) and the [knurled rotary botton](3D/knurled_button.stl) are available:
 <p float="left">
-    <img src="3D/case.png" width="40%">
-    <img src="3D/knurled_button.png" width="40%">
+    <img src="3D/case.png" width="30%">
+    <img src="3D/rear_cover.png" width="25%">
+    <img src="3D/knurled_button.png" width="30%">
 </p>
-I printed these with PLA using an Ender 3 v2. Pay attention to the orientation when slicing: the clock front side, the outside face of the rear cover as well as the top face of the button should be your first layer. You may use supports for the big case, I didn't use any and it went ok
+I printed these with PLA using an Ender 3 v2. Pay attention to the orientation when slicing: the clock front side, the outside face of the rear cover as well as the top face of the button should be your first layer. You may use supports for the big case, I didn't use any and it went ok.
+
+<img src="pictures/case_slicing.png" width="40%">
+
+You can find the original Fusion 360 files in the [3D folder](3D) as well.
 
 ## Final assembly
-In order to assemble everything you will need at least:
-- Soldering iron, tin, etc
-- Cables and connectors (i.e. with dupont crimps)
-- Small brass inserts and screws. 
 
-Follow these steps:
-1. Put an SD card with the necessary audio files as explained in the [resources section](../resources/README.md)
-2. Put the brass inserts in for the four internal corners where the board is attached
-3. Prepare the cables and connectors in advance, play attention to where everything is attached and the length of the required cables
-4. Slide in the finished board and screw it into the inserts
-5. Connect the cables to the rotary encoder and slide it into its place. Put the washer and hex nut and tighten it. Make sure it is perpendicular. Insert the button into the shaft
-6. Fix the speaker on the rear cover using some strong glue on the 4 small on on the internal face of the rear cover
-7. Make sure everything is connected, close the cover and put the screws in place
+1. Put an SD card with the necessary audio files. See <a href="../#waking-melodies-and-other-settings">Waking melodies and other settings chapter</a> of the main README for more instructions.
+2. Slide in the finished board and screw it into the case using 4 M2.5x8 screws
 
-Final result:
-<p float="left">
-    <img src="pictures/clock_inside.jpg" width="40%">
-</p>
+<img src="pictures/board_in_case.jpg" width="40%">
 
-## Possible modifications and variants
+3. Attach the ESP32 antenna on one side of the case and connect it to the board
+
+<img src="pictures/antenna.jpg" width="40%">
+
+4. Connect the cables to the rotary encoder and slide it into its place. Put the washer and hex nut and tighten it. Make sure it is perpendicular. Insert the button into the shaft
+
+<img src="pictures/rotary_encoder_mounting.jpg" width="40%">
+
+5. Attach the speaker on the rear cover. Pay attention to the orientation, since the rear cover has an upper and a lower part and you want the cables coming out of the lower part. It should be a tight fit into the pins, otherwise use some strong glue to make sure it stays attached
+
+<img src="pictures/speakers_on_cover.jpg" width="40%">
+
+6. Connect everything together sure everything is connected  
+
+<img src="pictures/clock_inside.jpg" width="40%">
+
+7. Close the cover using 4 M2x4 screws
+
+## Modifications
 The components used are just what I could get my hands on or what made sense to me. Here some considerations:
 
-- It should be possible to use any other ESP32 board, specially ESP32C3 like the official [ESP32-C3-DevKitM-1](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/hw-reference/esp32c3/user-guide-devkitm-1.html) from Espressif. But the board design and/or pin assignments defined in [clock_common.hpp](src/clock_common.hpp) may need a corresponding adjustment. Unfortunately, the ESP32 board I used has been discontinued by Waveshare, so that future builds of this clock will need these adaptions. I am already working on a new version based on the [Seeed Studio XIAO ESP32C3](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/)
+- It should be possible to use any other ESP32 board. The previous version used the [ESP-C3-32S-Kit ESP32 WiFi+Bluetooth Development Board](https://www.waveshare.com/esp-c3-32s-kit.htm). You just need to make sure that you have at least 11 pins available. The pin assignments defined in [clock_common.hpp](src/clock_common.hpp) will most likely need an adjustment. If you take a variant different from the ESP32C3 you might require more extensive changes as well
 - Other LCD displays could work as well, specially if the same ILI9341 driver is used, but maybe other settings are required. Since the used library LovyanGFX supports a lot of different displays, changing to another display is just a matter of adjusting the configuration and, if the resolution changes, the layout (font sizes, symbol and text positions)
 - In general any other component like the rotary encoder, speaker or the light sensor should be exchangeable with no or little effort
