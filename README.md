@@ -10,6 +10,8 @@
 
 **A self-made clock with a gentle crescendo wake up alarm**
 
+https://user-images.githubusercontent.com/75809109/229468796-8822e73a-d802-4b9b-99c0-e9e2a0a7bf44.mp4
+
 ## Highlights
 - Gentle alarm-clock with a crescendo function to wake up slowly and peacefully
 - Simplified user interaction with a rotary encoder with a button. No touch display, no need for 10 different buttons
@@ -32,6 +34,7 @@ Double press / click action is not supported.
 ### First step: connecting to WiFi
 The crescendo clock sets the time automatically when it is connected to a WiFi. Manual time setting is not supported. The first time you power the clock or when the configured WiFi is not available, you will see a red wifi symbol on the right side of the screen:
 
+https://user-images.githubusercontent.com/75809109/229468847-7dcbb47f-4164-47c6-b531-5e9feb42a694.mp4
 
 Rotate the encoder just one click (left or right) and you will see a message "PRESS WPS". Press the WPS button of your router (or select the corresponding option of your specific router model) and wait a little bit until the WiFi connection has been established automatically. WiFi credentials are stored in NVS of ESP32 so that you will not need to repeat this step in the future. Only one credentials set can be stored: if you configure your clock for a different WiFi using the same procedure, the original WiFi credentials will no longer be present in the NVS.
 
