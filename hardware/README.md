@@ -1,4 +1,13 @@
 # Hardware
+
+<p align="center">
+  <a href="#schematics-and-pcb-design">Highlights</a> •
+  <a href="#board-assembly">Board assembly</a> •
+  <a href="#3d-printed-case">3D printed case</a> •
+  <a href="#final-assembly">Final assembly</a> •
+  <a href="#modifications">Modifications</a><br>
+</p>
+
 ## Schematics and PCB design
 <p float="left">
     <img src="pictures/schematic.png" width="25%">
@@ -77,18 +86,30 @@ You can find the original Fusion 360 files in the [3D folder](3D) as well.
 
 ## Final assembly
 
-1. Put an SD card with the necessary audio files
+1. Put an SD card with the necessary audio files. See <a href="../#waking-melodies-and-other-settings">Waking melodies and other settings chapter</a> of the main README for more instructions.
 2. Slide in the finished board and screw it into the case using 4 M2.5x8 screws
-3. Connect the cables to the rotary encoder and slide it into its place. Put the washer and hex nut and tighten it. Make sure it is perpendicular. Insert the button into the shaft
-4. Attach the speaker on the rear cover. Pay attention to the orientation, since the rear cover has an upper and a lower part and you want the cables coming out of the lower part. It should be a tight fit into the pins, otherwise use some strong glue to make sure it stays attached
-5. Make sure everything is connected and close the cover using 4 M2x4 screws
 
-Final result:
-<p float="left">
-    <img src="pictures/clock_inside.jpg" width="40%">
-</p>
+<img src="pictures/board_in_case.jpg" width="40%">
 
-## Possible modifications and variants
+3. Attach the ESP32 antenna on one side of the case and connect it to the board
+
+<img src="pictures/antenna.jpg" width="40%">
+
+4. Connect the cables to the rotary encoder and slide it into its place. Put the washer and hex nut and tighten it. Make sure it is perpendicular. Insert the button into the shaft
+
+<img src="pictures/rotary_encoder_mounting.jpg" width="40%">
+
+5. Attach the speaker on the rear cover. Pay attention to the orientation, since the rear cover has an upper and a lower part and you want the cables coming out of the lower part. It should be a tight fit into the pins, otherwise use some strong glue to make sure it stays attached
+
+<img src="pictures/speakers_on_cover.jpg" width="40%">
+
+6. Connect everything together sure everything is connected  
+
+<img src="pictures/clock_inside.jpg" width="40%">
+
+7. Close the cover using 4 M2x4 screws
+
+## Modifications
 The components used are just what I could get my hands on or what made sense to me. Here some considerations:
 
 - It should be possible to use any other ESP32 board. The previous version used the [ESP-C3-32S-Kit ESP32 WiFi+Bluetooth Development Board](https://www.waveshare.com/esp-c3-32s-kit.htm). You just need to make sure that you have at least 11 pins available. The pin assignments defined in [clock_common.hpp](src/clock_common.hpp) will most likely need an adjustment. If you take a variant different from the ESP32C3 you might require more extensive changes as well
