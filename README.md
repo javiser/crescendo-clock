@@ -10,11 +10,6 @@
 
 **A self-made clock with a gentle crescendo wake up alarm**
 
-<p float="left">
-  <img src="hardware/pictures/crescendo_clock.jpg" width="40%">
-  <img src="hardware/pictures/crescendo_clock_rear.jpg" width="40%">
-</p>
-
 ## Highlights
 - Gentle alarm-clock with a crescendo function to wake up slowly and peacefully
 - Simplified user interaction with a rotary encoder with a button. No touch display, no need for 10 different buttons
