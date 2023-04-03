@@ -4,8 +4,8 @@
   <a href="#highlights">Highlights</a> •
   <a href="#how-to-use">How to use</a> •
   <a href="#main-components">Main components</a> •
-  <a href="#compiling-and-customizing-the-software">Compiling and customizing the software</a> •
-  <a href="#credits-and-acknowledgment">Credits and acknowledgment</a><br>
+  <a href="#compiling-and-customizing-the-software">Compiling and customizing SW</a> •
+  <a href="#credits-and-acknowledgment">Credits</a><br>
 </p>
 
 **A self-made clock with a gentle crescendo wake up alarm**
@@ -15,7 +15,6 @@
   <img src="hardware/pictures/crescendo_clock_rear.jpg" width="40%">
 </p>
 
-[ ] Add a nice video
 ## Highlights
 - Gentle alarm-clock with a crescendo function to wake up slowly and peacefully
 - Simplified user interaction with a rotary encoder with a button. No touch display, no need for 10 different buttons
@@ -37,7 +36,8 @@ Double press / click action is not supported.
 
 ### First step: connecting to WiFi
 The crescendo clock sets the time automatically when it is connected to a WiFi. Manual time setting is not supported. The first time you power the clock or when the configured WiFi is not available, you will see a red wifi symbol on the right side of the screen:
-[ ] Add screnshot
+
+
 Rotate the encoder just one click (left or right) and you will see a message "PRESS WPS". Press the WPS button of your router (or select the corresponding option of your specific router model) and wait a little bit until the WiFi connection has been established automatically. WiFi credentials are stored in NVS of ESP32 so that you will not need to repeat this step in the future. Only one credentials set can be stored: if you configure your clock for a different WiFi using the same procedure, the original WiFi credentials will no longer be present in the NVS.
 
 ### Using the crescendo clock 
@@ -52,11 +52,9 @@ This overview describes the basic usage of the crescendo clock:
 Additional comments:
 - If the alarm is active for triggering the alarm time is shown, otherwise it is hidden
 - If the alarm is active and the remaining time until alarm triggering is less than 9 hours, this remaining "bed time" will be displayed as well
-[ ] Add nice picture
 - After snoozing a triggered alarm, the alarm will be triggered again after 5 minutes if the snooze has not been cancelled
 - The snooze process will continue indefinitely until it hasn't been cancelled
-- The snooze cancelling sequence is like this: rotate the encoder in one direction, then long press the encoder and finally rotate the encoder in the opposite direction, waiting no longer than 3 seconds between steps. You will see one bar above the remaining time until new alarm trigger when the first step of the sequence has been successfully performed and a second bar after the second step. When the final step is performed, the remaining "snooze time" will just disappear and the alarm time will disappear as well.
-[ ] Add video
+- The snooze cancelling sequence is like this: rotate the encoder in one direction, then long press the encoder and finally rotate the encoder in the opposite direction, waiting no longer than 3 seconds between steps. You will see one bar above the remaining time until new alarm trigger when the first step of the sequence has been successfully performed and a second bar after the second step. When the final step is performed, the remaining "snooze time" will just disappear and the alarm time will disappear as well (see the video at the beginning of this page)
 - After the snooze cancelling sequence the alarm is deactivated until you activate it again manually. You need to set the alarm every single day! Remember, I designed the clock following my ideal concept of a clock and this is the way I like it.
 
 ### MQTT integration
