@@ -32,14 +32,10 @@ void WifiTime::wifiEventHandler(void *pvParameter, esp_event_base_t event_base, 
                 esp_wifi_get_config(WIFI_IF_STA, &wifi_config);
                 strcpy((char*)pThis->wifi_credentials->ssid, (char*)wifi_config.sta.ssid);
                 strcpy((char*)pThis->wifi_credentials->password, (char*)wifi_config.sta.password);
-                #ifdef MQTT_ACTIVE
                 pThis->stopWPS();
-                #endif
                 break;
             default:
-                #ifdef MQTT_ACTIVE
                 pThis->stopWPS();
-                #endif
                 break;
         }
 
