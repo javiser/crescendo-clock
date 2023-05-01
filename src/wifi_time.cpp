@@ -5,6 +5,7 @@ static const char *TAG = "wifi_time";
 
 #ifdef MQTT_ACTIVE
 // I would have liked to add this as a class member but I don't know yet how to solve this
+static bool mqtt_is_initialized = false;
 static bool mqtt_is_connected = false;
 #endif
 
@@ -68,7 +69,8 @@ void WifiTime::monitorWifi(void) {
         ESP_LOGI(TAG, "Connected to WiFi: %s", wifi_credentials->ssid);
         wifi_is_connected = true;
         #ifdef MQTT_ACTIVE
-        mqttAppStart();
+        if (!mqtt_is_initialized)
+            mqttAppStart();
         #endif
     } 
     else if (bits & WIFI_FAIL_BIT) {
@@ -204,6 +206,7 @@ void WifiTime::mqttEventHandler(void *arg, esp_event_base_t base, int32_t event_
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT is connected");				
             mqtt_is_connected = true;
+            mqtt_is_initialized = true;
             break;
         case MQTT_EVENT_DISCONNECTED:
             ESP_LOGE(TAG, "MQTT is disconnected");		
