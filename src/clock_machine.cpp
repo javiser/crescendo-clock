@@ -61,8 +61,8 @@ void ClockMachine::writeNVSDefaultValues() {
     // Default some values if values not set in NVS yet
     alarm_time.hour = 7;
     alarm_time.minute = 0;
-    strcpy((char*)wifi_credentials.ssid, "Dummy");
-    strcpy((char*)wifi_credentials.password, "123456");
+    snprintf((char*)wifi_credentials.ssid, sizeof(wifi_credentials.ssid), "Dummy");
+    snprintf((char*)wifi_credentials.password, sizeof(wifi_credentials.password), "123456");
 
     saveAlarmTimeInNVS();
     saveWifiCredentialsInNVS();
